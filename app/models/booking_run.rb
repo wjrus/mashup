@@ -12,6 +12,7 @@ class BookingRun < ApplicationRecord
 
   validates :starts_at, :ends_at, presence: true
   validate :ends_at_is_after_starts_at
+  validate :occurs_within_booking_dates
   validate :space_is_available
 
   scope :chronological, -> { order(:starts_at, :ends_at) }
@@ -31,11 +32,19 @@ class BookingRun < ApplicationRecord
   def space_is_available
     return if space_id.blank? || starts_at.blank? || ends_at.blank? || canceled?
 
-    overlap = BookingRun.where(space_id: space_id)
+    overlap = BookingRun.joins(:booking).where(space_id: space_id)
       .where.not(id: id)
       .where.not(status: :canceled)
+      .where.not(bookings: { status: Booking.statuses[:canceled] })
       .where("starts_at < ? AND ends_at > ?", ends_at, starts_at)
 
     errors.add(:base, "space is already booked during this time") if overlap.exists?
+  end
+
+  def occurs_within_booking_dates
+    return if booking.blank? || starts_at.blank? || ends_at.blank? || booking.starts_on.blank? || booking.ends_on.blank?
+    return if starts_at.to_date >= booking.starts_on && ends_at.to_date <= booking.ends_on
+
+    errors.add(:base, "run must occur within the booking dates")
   end
 end

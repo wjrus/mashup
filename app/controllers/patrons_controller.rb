@@ -12,7 +12,7 @@ class PatronsController < ApplicationController
 
   def new
     @patron = Patron.new
-    2.times { @patron.contacts.build }
+    @patron.contacts.build
   end
 
   def edit

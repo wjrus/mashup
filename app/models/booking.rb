@@ -18,7 +18,7 @@ class Booking < ApplicationRecord
   has_many :booking_documents, dependent: :destroy
   has_many :google_syncs, as: :syncable, dependent: :destroy
 
-  accepts_nested_attributes_for :booking_runs, reject_if: :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :booking_runs, reject_if: :blank_run_attributes?, allow_destroy: true
 
   enum :booking_type, BOOKING_TYPES
   enum :status, {
@@ -39,6 +39,9 @@ class Booking < ApplicationRecord
   validates :title, :starts_on, :ends_on, presence: true
   validates :estimated_attendance, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
   validate :ends_on_is_not_before_starts_on
+  validate :primary_contact_belongs_to_patron
+
+  after_update :cancel_scheduled_runs, if: :saved_change_to_status?
 
   scope :upcoming, -> { where("ends_on >= ?", Date.current).order(:starts_on, :title) }
   scope :recent_first, -> { order(starts_on: :desc, created_at: :desc) }
@@ -59,5 +62,19 @@ class Booking < ApplicationRecord
     return if starts_on.blank? || ends_on.blank? || ends_on >= starts_on
 
     errors.add(:ends_on, "must be on or after the start date")
+  end
+
+  def primary_contact_belongs_to_patron
+    return if primary_contact.blank? || patron.blank? || primary_contact.patron_id == patron_id
+
+    errors.add(:primary_contact, "must belong to the selected patron")
+  end
+
+  def blank_run_attributes?(attributes)
+    attributes.values_at("space_id", "starts_at", "ends_at", "notes").all?(&:blank?)
+  end
+
+  def cancel_scheduled_runs
+    booking_runs.where.not(status: :canceled).update_all(status: BookingRun.statuses[:canceled], updated_at: Time.current) if canceled?
   end
 end

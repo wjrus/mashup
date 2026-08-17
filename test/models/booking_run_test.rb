@@ -34,4 +34,13 @@ class BookingRunTest < ActiveSupport::TestCase
 
     assert run.valid?
   end
+
+  test "requires a run to occur within its booking dates" do
+    run = booking_runs(:one)
+    run.starts_at = Time.zone.local(2026, 7, 10, 10)
+    run.ends_at = Time.zone.local(2026, 7, 10, 12)
+
+    assert_not run.valid?
+    assert_includes run.errors[:base], "run must occur within the booking dates"
+  end
 end

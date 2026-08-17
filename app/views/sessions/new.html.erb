@@ -14,7 +14,7 @@
 
   <div class="auth-divider"><span>or</span></div>
 
-  <%= form_with url: request_magic_link_path, class: "compact-form" do |form| %>
+  <%= form_with url: email_login_path, class: "compact-form" do |form| %>
     <%= form.label :email, "Staff email" %>
     <%= form.email_field :email, required: true, autocomplete: "email" %>
     <%= form.submit "Email me a sign-in link", class: "secondary-button" %>

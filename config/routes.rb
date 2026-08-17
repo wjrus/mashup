@@ -12,16 +12,18 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "dashboard#show"
 
-  get "sign_in", to: "sessions#new"
+  get "login", to: "sessions#new", as: :login
   get "auth/:provider/callback", to: "sessions#create"
   post "auth/:provider/callback", to: "sessions#create"
   get "auth/failure", to: "sessions#failure"
-  delete "sign_out", to: "sessions#destroy"
-  post "magic_link", to: "magic_links#create", as: :request_magic_link
-  get "magic_link/:token", to: "magic_links#show", as: :magic_link
+  delete "logout", to: "sessions#destroy", as: :logout
+  post "login/email", to: "passwordless_sessions#create", as: :email_login
+  get "login/email/:token", to: "passwordless_sessions#show", as: :verify_login
 
   resources :patrons, except: :destroy
   resources :bookings, except: :destroy do
-    resources :booking_documents, only: :create
+    resources :booking_documents, only: %i[show create] do
+      get :open, on: :member
+    end
   end
 end

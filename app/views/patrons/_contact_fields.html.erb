@@ -1,0 +1,33 @@
+<div class="nested-form" data-nested-form-row data-new-record="<%= contact_fields.object.new_record? %>">
+  <%= contact_fields.hidden_field :_destroy, value: "0", data: { destroy_field: true } %>
+
+  <div>
+    <%= contact_fields.label :first_name %>
+    <%= contact_fields.text_field :first_name %>
+  </div>
+  <div>
+    <%= contact_fields.label :last_name %>
+    <%= contact_fields.text_field :last_name %>
+  </div>
+  <div>
+    <%= contact_fields.label :title %>
+    <%= contact_fields.text_field :title %>
+  </div>
+  <div>
+    <%= contact_fields.label :email %>
+    <%= contact_fields.email_field :email %>
+  </div>
+  <div>
+    <%= contact_fields.label :phone %>
+    <%= contact_fields.telephone_field :phone %>
+  </div>
+  <label class="check">
+    <%= contact_fields.check_box :primary_contact %>
+    Primary
+  </label>
+  <label class="check">
+    <%= contact_fields.check_box :billing_contact %>
+    Billing
+  </label>
+  <button type="button" class="secondary-button" data-action="nested-form#remove">Remove contact</button>
+</div>

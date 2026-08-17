@@ -10,8 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_17_014000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_17_023000) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -75,6 +76,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_17_014000) do
     t.index ["space_id", "starts_at", "ends_at"], name: "index_booking_runs_on_space_id_and_starts_at_and_ends_at"
     t.index ["space_id"], name: "index_booking_runs_on_space_id"
     t.index ["status"], name: "index_booking_runs_on_status"
+    t.check_constraint "ends_at > starts_at", name: "booking_runs_valid_time_range"
+    t.exclusion_constraint "space_id WITH =, tsrange(starts_at, ends_at, '[)'::text) WITH &&", where: "status <> 2", using: :gist, name: "booking_runs_no_space_overlap"
   end
 
   create_table "bookings", force: :cascade do |t|
@@ -99,6 +102,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_17_014000) do
     t.index ["primary_contact_id"], name: "index_bookings_on_primary_contact_id"
     t.index ["starts_on", "ends_on"], name: "index_bookings_on_starts_on_and_ends_on"
     t.index ["status"], name: "index_bookings_on_status"
+    t.check_constraint "ends_on >= starts_on", name: "bookings_valid_date_range"
+    t.check_constraint "estimated_attendance IS NULL OR estimated_attendance >= 0", name: "bookings_nonnegative_attendance"
   end
 
   create_table "contacts", force: :cascade do |t|
@@ -163,6 +168,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_17_014000) do
     t.datetime "updated_at", null: false
     t.index ["active"], name: "index_spaces_on_active"
     t.index ["name"], name: "index_spaces_on_name", unique: true
+    t.check_constraint "capacity IS NULL OR capacity > 0", name: "spaces_positive_capacity"
   end
 
   create_table "users", force: :cascade do |t|
@@ -170,14 +176,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_17_014000) do
     t.datetime "created_at", null: false
     t.string "email", null: false
     t.datetime "last_sign_in_at"
-    t.string "magic_link_nonce"
+    t.string "login_nonce"
     t.string "name"
     t.string "provider", null: false
     t.integer "role", default: 0, null: false
     t.string "uid", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["magic_link_nonce"], name: "index_users_on_magic_link_nonce", unique: true
+    t.index ["login_nonce"], name: "index_users_on_login_nonce", unique: true
     t.index ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true
   end
 

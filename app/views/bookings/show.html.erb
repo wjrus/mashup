@@ -55,9 +55,9 @@
             <span><%= document.document_type.humanize %> · <%= document.status.humanize %></span>
           </div>
           <% if document.google_drive_url.present? %>
-            <%= link_to "Drive", document.google_drive_url, target: "_blank", rel: "noopener" %>
+            <%= link_to "Drive", open_booking_booking_document_path(@booking, document), target: "_blank", rel: "noopener" %>
           <% elsif document.file.attached? %>
-            <%= link_to "Download", rails_blob_path(document.file, disposition: "attachment") %>
+            <%= link_to "Download", booking_booking_document_path(@booking, document) %>
           <% end %>
         </div>
       <% end %>

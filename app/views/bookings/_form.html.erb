@@ -7,7 +7,7 @@
 
 <%= render "shared/errors", record: booking %>
 
-<%= form_with model: booking, class: "form" do |form| %>
+<%= form_with model: booking, class: "form", data: { controller: "patron-contact" } do |form| %>
   <section class="form-grid">
     <div>
       <%= form.label :title %>
@@ -15,11 +15,12 @@
     </div>
     <div>
       <%= form.label :patron_id, "Patron" %>
-      <%= form.collection_select :patron_id, Patron.order(:name), :id, :name, { prompt: "Choose a patron" }, required: true %>
+      <%= form.collection_select :patron_id, Patron.order(:name), :id, :name, { prompt: "Choose a patron" }, required: true, data: { patron_contact_target: "patron", action: "patron-contact#filterContacts" } %>
     </div>
     <div>
       <%= form.label :primary_contact_id, "Primary contact" %>
-      <%= form.collection_select :primary_contact_id, Contact.includes(:patron).order(:last_name, :first_name), :id, ->(contact) { "#{contact.name} (#{contact.patron.name})" }, { include_blank: "None" } %>
+      <% contact_options = Contact.includes(:patron).order(:last_name, :first_name).map { |contact| ["#{contact.name} (#{contact.patron.name})", contact.id, { data: { patron_id: contact.patron_id } }] } %>
+      <%= form.select :primary_contact_id, contact_options, { include_blank: "None" }, data: { patron_contact_target: "contact" } %>
     </div>
     <div>
       <%= form.label :booking_type %>
@@ -51,34 +52,23 @@
     </label>
   </section>
 
-  <section class="panel">
-    <h2>Runs</h2>
-    <%= form.fields_for :booking_runs do |run_fields| %>
-      <div class="nested-form">
-        <div>
-          <%= run_fields.label :space_id, "Space" %>
-          <%= run_fields.collection_select :space_id, Space.where(active: true).order(:name), :id, :name, { include_blank: "Choose a space" } %>
-        </div>
-        <div>
-          <%= run_fields.label :starts_at %>
-          <%= run_fields.datetime_field :starts_at %>
-        </div>
-        <div>
-          <%= run_fields.label :ends_at %>
-          <%= run_fields.datetime_field :ends_at %>
-        </div>
-        <div>
-          <%= run_fields.label :status %>
-          <%= run_fields.select :status, BookingRun.statuses.keys.map { |key| [key.humanize, key] } %>
-        </div>
-        <% if run_fields.object.persisted? %>
-          <label class="check">
-            <%= run_fields.check_box :_destroy %>
-            Remove
-          </label>
-        <% end %>
-      </div>
-    <% end %>
+  <section class="panel" data-controller="nested-form">
+    <div class="section-heading">
+      <h2>Runs</h2>
+      <button type="button" class="secondary-button" data-action="nested-form#add">Add run</button>
+    </div>
+
+    <template data-nested-form-target="template">
+      <%= form.fields_for :booking_runs, BookingRun.new, child_index: "NEW_RECORD" do |run_fields| %>
+        <%= render "run_fields", run_fields: run_fields %>
+      <% end %>
+    </template>
+
+    <div data-nested-form-target="container">
+      <%= form.fields_for :booking_runs do |run_fields| %>
+        <%= render "run_fields", run_fields: run_fields %>
+      <% end %>
+    </div>
   </section>
 
   <section class="form-grid">

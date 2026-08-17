@@ -9,15 +9,15 @@ class SessionsController < ApplicationController
     session[:user_id] = user.id
     redirect_to session.delete(:return_to).presence || root_path, notice: "Signed in as #{user.email}."
   rescue ActiveRecord::RecordInvalid => error
-    redirect_to sign_in_path, alert: "We could not sign you in: #{error.record.errors.full_messages.to_sentence}."
+    redirect_to login_path, alert: "We could not sign you in: #{error.record.errors.full_messages.to_sentence}."
   end
 
   def failure
-    redirect_to sign_in_path, alert: "Google sign-in failed: #{params[:message].to_s.humanize}."
+    redirect_to login_path, alert: "Google sign-in failed: #{params[:message].to_s.humanize}."
   end
 
   def destroy
     reset_session
-    redirect_to sign_in_path, notice: "Signed out."
+    redirect_to login_path, notice: "Signed out."
   end
 end

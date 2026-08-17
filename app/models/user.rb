@@ -4,10 +4,10 @@ class User < ApplicationRecord
 
   enum :role, { staff: 0, admin: 1 }
 
-  has_secure_token :magic_link_nonce
+  has_secure_token :login_nonce
 
-  generates_token_for :magic_link, expires_in: 15.minutes do
-    magic_link_nonce
+  generates_token_for :email_login, expires_in: 15.minutes do
+    login_nonce
   end
 
   has_many :created_bookings, class_name: "Booking", foreign_key: :created_by_id, dependent: :nullify, inverse_of: :created_by
@@ -35,12 +35,12 @@ class User < ApplicationRecord
     user
   end
 
-  def self.for_magic_link(email)
+  def self.for_email_login(email)
     normalized_email = email.to_s.strip.downcase
     return unless authorized_email?(normalized_email)
 
     find_or_create_by!(email: normalized_email) do |user|
-      user.provider = "magic_link"
+      user.provider = "email"
       user.uid = normalized_email
       user.name = normalized_email
     end

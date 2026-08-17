@@ -58,40 +58,23 @@
     </div>
   </section>
 
-  <section class="panel">
-    <h2>Contacts</h2>
-    <%= form.fields_for :contacts do |contact_fields| %>
-      <div class="nested-form">
-        <div>
-          <%= contact_fields.label :first_name %>
-          <%= contact_fields.text_field :first_name %>
-        </div>
-        <div>
-          <%= contact_fields.label :last_name %>
-          <%= contact_fields.text_field :last_name %>
-        </div>
-        <div>
-          <%= contact_fields.label :title %>
-          <%= contact_fields.text_field :title %>
-        </div>
-        <div>
-          <%= contact_fields.label :email %>
-          <%= contact_fields.email_field :email %>
-        </div>
-        <div>
-          <%= contact_fields.label :phone %>
-          <%= contact_fields.telephone_field :phone %>
-        </div>
-        <label class="check">
-          <%= contact_fields.check_box :primary_contact %>
-          Primary
-        </label>
-        <label class="check">
-          <%= contact_fields.check_box :billing_contact %>
-          Billing
-        </label>
-      </div>
-    <% end %>
+  <section class="panel" data-controller="nested-form">
+    <div class="section-heading">
+      <h2>Contacts</h2>
+      <button type="button" class="secondary-button" data-action="nested-form#add">Add contact</button>
+    </div>
+
+    <template data-nested-form-target="template">
+      <%= form.fields_for :contacts, Contact.new, child_index: "NEW_RECORD" do |contact_fields| %>
+        <%= render "contact_fields", contact_fields: contact_fields %>
+      <% end %>
+    </template>
+
+    <div data-nested-form-target="container">
+      <%= form.fields_for :contacts do |contact_fields| %>
+        <%= render "contact_fields", contact_fields: contact_fields %>
+      <% end %>
+    </div>
   </section>
 
   <div>

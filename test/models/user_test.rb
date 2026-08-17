@@ -38,12 +38,12 @@ class UserTest < ActiveSupport::TestCase
     assert_includes user.errors[:email], "is not authorized for staff access"
   end
 
-  test "magic link tokens are invalid after the nonce changes" do
+  test "email login tokens are invalid after the nonce changes" do
     user = users(:two)
-    token = user.generate_token_for(:magic_link)
+    token = user.generate_token_for(:email_login)
 
-    assert_equal user, User.find_by_token_for(:magic_link, token)
-    user.regenerate_magic_link_nonce
-    assert_nil User.find_by_token_for(:magic_link, token)
+    assert_equal user, User.find_by_token_for(:email_login, token)
+    user.regenerate_login_nonce
+    assert_nil User.find_by_token_for(:email_login, token)
   end
 end
