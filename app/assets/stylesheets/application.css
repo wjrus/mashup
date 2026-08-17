@@ -314,6 +314,14 @@ tr:last-child td {
 .form {
   display: grid;
   gap: 20px;
+  min-width: 0;
+}
+
+.form-grid,
+.form-grid > *,
+.nested-form,
+.nested-form > * {
+  min-width: 0;
 }
 
 .compact-form {
@@ -439,6 +447,26 @@ dd {
   .page-header,
   .account {
     flex-direction: column;
+  }
+
+  .topbar {
+    padding: 12px 18px;
+  }
+
+  .topbar nav {
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    min-width: 0;
+  }
+
+  .account,
+  .topbar nav {
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .page {
+    padding: 20px 18px;
   }
 
   .stats-grid,
