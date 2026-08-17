@@ -13,3 +13,9 @@ module ActiveSupport
     # Add more helper methods to be used by all tests here...
   end
 end
+
+class ActionDispatch::IntegrationTest
+  def sign_in_as(user)
+    get verify_login_path(token: user.generate_token_for(:email_login))
+  end
+end

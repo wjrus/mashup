@@ -8,8 +8,10 @@ class SessionsController < ApplicationController
     return connect_google_calendar if params[:provider] == "google_calendar"
 
     user = User.from_omniauth(request.env.fetch("omniauth.auth"))
+    return_to = session.delete(:return_to).presence || root_path
+    reset_session
     session[:user_id] = user.id
-    redirect_to session.delete(:return_to).presence || root_path, notice: "Signed in as #{user.email}."
+    redirect_to return_to, notice: "Signed in as #{user.email}."
   rescue ActiveRecord::RecordInvalid => error
     redirect_to login_path, alert: "We could not sign you in: #{error.record.errors.full_messages.to_sentence}."
   end

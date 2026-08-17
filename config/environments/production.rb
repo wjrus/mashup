@@ -25,14 +25,14 @@ Rails.application.configure do
   config.active_storage.service = :local
 
   config.action_mailer.default_url_options = {
-    host: ENV.fetch("APP_HOST"),
+    host: ENV.fetch("APP_HOST", "localhost"),
     protocol: ENV.fetch("APP_PROTOCOL", "https")
   }
   config.action_mailer.smtp_settings = {
-    address: ENV.fetch("SMTP_ADDRESS"),
+    address: ENV["SMTP_ADDRESS"],
     port: ENV.fetch("SMTP_PORT", 587),
-    user_name: ENV.fetch("SMTP_USERNAME"),
-    password: ENV.fetch("SMTP_PASSWORD"),
+    user_name: ENV["SMTP_USERNAME"],
+    password: ENV["SMTP_PASSWORD"],
     authentication: :plain,
     enable_starttls_auto: true
   }

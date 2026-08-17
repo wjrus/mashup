@@ -1,0 +1,31 @@
+<% content_for :title, "Staff" %>
+
+<div class="page-header">
+  <div>
+    <p class="eyebrow">Administration</p>
+    <h1>Staff Accounts</h1>
+  </div>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Access</th>
+        <th>Last sign-in</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |user| %>
+        <tr>
+          <td><strong><%= user.name %></strong></td>
+          <td><%= user.email %></td>
+          <td><span class="pill"><%= user.role.humanize %></span></td>
+          <td><%= user.last_sign_in_at&.to_fs(:long) || "Never" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

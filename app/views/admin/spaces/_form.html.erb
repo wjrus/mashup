@@ -1,0 +1,28 @@
+<%= render "shared/errors", record: space %>
+
+<%= form_with model: [ :admin, space ], class: "form" do |form| %>
+  <section class="form-grid">
+    <div>
+      <%= form.label :name %>
+      <%= form.text_field :name, required: true %>
+    </div>
+    <div>
+      <%= form.label :capacity %>
+      <%= form.number_field :capacity, min: 1 %>
+    </div>
+    <label class="check">
+      <%= form.check_box :active %>
+      Active
+    </label>
+  </section>
+
+  <div>
+    <%= form.label :description %>
+    <%= form.text_area :description, rows: 4 %>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "primary-button" %>
+    <%= link_to "Cancel", admin_spaces_path, class: "secondary-button" %>
+  </div>
+<% end %>

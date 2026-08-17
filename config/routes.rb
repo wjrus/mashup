@@ -14,13 +14,18 @@ Rails.application.routes.draw do
 
   resource :settings, only: :show
 
+  namespace :admin do
+    resources :spaces, except: %i[show destroy]
+    resources :users, only: :index
+  end
+
   get "login", to: "sessions#new", as: :login
   get "auth/:provider/callback", to: "sessions#create"
   post "auth/:provider/callback", to: "sessions#create"
   get "auth/failure", to: "sessions#failure"
   delete "logout", to: "sessions#destroy", as: :logout
   post "login/email", to: "passwordless_sessions#create", as: :email_login
-  get "login/email/:token", to: "passwordless_sessions#show", as: :verify_login
+  get "login/email", to: "passwordless_sessions#show", as: :verify_login
 
   resources :patrons, except: :destroy
   resources :bookings, except: :destroy do

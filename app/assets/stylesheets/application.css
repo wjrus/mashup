@@ -419,6 +419,10 @@ dd {
   justify-content: space-between;
 }
 
+.settings-links {
+  margin-bottom: 20px;
+}
+
 .settings-panel h2,
 .settings-panel p {
   margin-bottom: 0;

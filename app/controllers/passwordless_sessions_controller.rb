@@ -12,11 +12,12 @@ class PasswordlessSessionsController < ApplicationController
     user = User.find_by_token_for(:email_login, params[:token])
 
     if user
+      return_to = session.delete(:return_to).presence || root_path
       user.regenerate_login_nonce
       user.touch(:last_sign_in_at)
       reset_session
       session[:user_id] = user.id
-      redirect_to root_path, notice: "Signed in as #{user.email}."
+      redirect_to return_to, notice: "Signed in as #{user.email}."
     else
       redirect_to login_path, alert: "That sign-in link is invalid or has expired."
     end

@@ -1,0 +1,32 @@
+<% content_for :title, "Spaces" %>
+
+<div class="page-header">
+  <div>
+    <p class="eyebrow">Administration</p>
+    <h1>Spaces</h1>
+  </div>
+  <%= link_to "New space", new_admin_space_path, class: "primary-button" %>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Capacity</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @spaces.each do |space| %>
+        <tr>
+          <td><strong><%= space.name %></strong></td>
+          <td><%= space.capacity || "Not set" %></td>
+          <td><span class="pill"><%= space.active? ? "Active" : "Inactive" %></span></td>
+          <td><%= link_to "Edit", edit_admin_space_path(space) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

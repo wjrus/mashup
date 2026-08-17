@@ -1,0 +1,10 @@
+<% content_for :title, "Edit #{@space.name}" %>
+
+<div class="page-header">
+  <div>
+    <p class="eyebrow">Administration</p>
+    <h1>Edit <%= @space.name %></h1>
+  </div>
+</div>
+
+<%= render "form", space: @space %>
