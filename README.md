@@ -1,50 +1,74 @@
 # Mashup Bookings
 
-A Rails booking management system for nonprofit theatre operations.
+Internal booking operations for a nonprofit theatre company, built with Rails 8.1 and PostgreSQL.
 
-## Current scope
+## Current capabilities
 
-- Google-account sign-in via OmniAuth.
-- Patrons with contacts, address, phone, email, notes, and patron type.
-- Bookings for performances, rehearsals, parties, special events, maintenance, classes/workshops, and other uses.
-- Multi-run scheduling across spaces, with overlap validation.
-- Contract/document tracking with local uploads and Google Drive URL fields.
-- Google sync records ready for Calendar and Drive integrations.
+- Google and one-time email-link login for authorized staff.
+- A single configured administrator (`wjr@wjr.us` by default).
+- Staff access for `wjr.us` and `mashuprockandrollmusical.com` accounts.
+- Patrons and contacts classified as nonprofit, for-profit, partner, or Mashup.
+- Multi-week bookings with multiple scheduled runs across managed spaces.
+- Database-backed protection against overlapping use of a space.
+- Contract and document tracking with protected local downloads or Google Drive links.
+- Admin-managed outbound synchronization of booking runs to Google Calendar.
 
-## Local Docker
+Google Calendar import/matching and Ludus patron import are planned after representative exports are available.
 
-Copy the env template and fill in Google OAuth credentials when you have them:
+## Local setup
+
+Ruby 3.4.9, PostgreSQL, and Bundler are required.
 
 ```sh
 cp .env.example .env
+bundle install
+bin/rails db:prepare
+bin/rails db:seed
+bin/rails server
 ```
 
-Boot the app and PostgreSQL:
+Open http://localhost:3000.
+
+In development, email sign-in messages are written to `tmp/mails`. Request a link on `/login`, then open the newest generated email file and follow its `/login/email?token=...` URL.
+
+## Docker Compose
+
+Install and start Docker Desktop, then run:
 
 ```sh
+cp .env.example .env
 docker compose up --build
 ```
 
-The app will be available at http://localhost:3000 by default.
+The web app is available at http://localhost:3000. PostgreSQL is bound to `127.0.0.1:5432` by default.
 
-## Local Ruby
+## Google setup
 
-This app uses Ruby 3.4.9 and Rails 8.1.3.
+Create a Google Cloud OAuth web application and enable the Google Calendar API. For local development, add these authorized redirect URIs:
+
+```text
+http://localhost:3000/auth/google_oauth2/callback
+http://localhost:3000/auth/google_calendar/callback
+```
+
+Configure `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `.env`. `GOOGLE_CALENDAR_ID` may be `primary` or the ID of a shared calendar. Calendar authorization is separate from login and is available only from the administrator settings screen.
+
+The default access policy can be overridden with comma-separated `ADMIN_EMAILS` and `STAFF_DOMAINS`. Patron organization types do not grant application access.
+
+## Email delivery
+
+Development writes messages to `tmp/mails`; tests use the in-memory test delivery method. A deployed environment must provide `APP_HOST`, `MAIL_FROM`, and the `SMTP_*` variables from `.env.example`.
+
+## Verification
 
 ```sh
-bundle install
-bin/rails db:prepare
 bin/rails test
+bin/rubocop
+bin/brakeman --quiet --no-pager
+bin/bundler-audit check --update
+bin/ci
 ```
 
-## Google OAuth
+## Data and files
 
-Create OAuth credentials in Google Cloud and set:
-
-```sh
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
-AUTH_DOMAIN=
-```
-
-Use `AUTH_DOMAIN` only if you want to restrict sign-ins to a Google Workspace domain.
+Development uploads are stored in `storage/`, which is mounted as a Docker volume by `compose.yml`. A production deployment must use durable storage before real contracts are uploaded.

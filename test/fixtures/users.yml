@@ -5,7 +5,7 @@ one:
   uid: user-one
   email: wjr@wjr.us
   name: MyString
-  avatar_url: MyString
+  avatar_url: https://example.org/admin.png
   role: 1
   login_nonce: <%= SecureRandom.base58(24) %>
   last_sign_in_at: 2026-07-09 12:13:11
@@ -15,7 +15,7 @@ two:
   uid: user-two
   email: staff@mashuprockandrollmusical.com
   name: MyString
-  avatar_url: MyString
+  avatar_url: https://example.org/staff.png
   role: 0
   login_nonce: <%= SecureRandom.base58(24) %>
   last_sign_in_at: 2026-07-09 12:13:11
