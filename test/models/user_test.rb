@@ -46,4 +46,16 @@ class UserTest < ActiveSupport::TestCase
     user.regenerate_login_nonce
     assert_nil User.find_by_token_for(:email_login, token)
   end
+
+  test "encrypts Google Calendar credentials at rest" do
+    user = users(:one)
+
+    user.google_access_token = "access-secret"
+    user.google_refresh_token = "refresh-secret"
+
+    assert_equal "access-secret", user.google_access_token
+    assert_equal "refresh-secret", user.google_refresh_token
+    assert_not_includes user.google_access_token_encrypted, "access-secret"
+    assert_not_includes user.google_refresh_token_encrypted, "refresh-secret"
+  end
 end

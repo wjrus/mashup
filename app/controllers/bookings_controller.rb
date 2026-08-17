@@ -1,6 +1,6 @@
 class BookingsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_booking, only: %i[show edit update]
+  before_action :set_booking, only: %i[show edit update sync_calendar]
 
   def index
     @bookings = Booking.includes(:patron, :primary_contact).recent_first
@@ -36,6 +36,17 @@ class BookingsController < ApplicationController
       redirect_to @booking, notice: "Booking updated."
     else
       render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def sync_calendar
+    connection = User.admin.find(&:google_calendar_connected?)
+
+    if connection
+      GoogleCalendarSyncJob.perform_later(@booking, connection)
+      redirect_to @booking, notice: "Calendar sync queued."
+    else
+      redirect_to @booking, alert: "Google Calendar is not connected. Ask an administrator to connect it in Settings."
     end
   end
 

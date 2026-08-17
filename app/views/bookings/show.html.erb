@@ -7,6 +7,7 @@
     <p class="subtitle"><%= link_to @booking.patron.name, @booking.patron %> · <%= @booking.date_span %></p>
   </div>
   <div class="actions">
+    <%= button_to "Sync calendar", sync_calendar_booking_path(@booking), method: :post, class: "secondary-button" %>
     <%= link_to "Edit booking", edit_booking_path(@booking), class: "secondary-button" %>
     <%= link_to "All bookings", bookings_path, class: "secondary-button" %>
   </div>
@@ -22,7 +23,12 @@
             <strong><%= run.space.name %></strong>
             <span><%= run.time_span %></span>
           </div>
-          <span class="pill"><%= run.status.humanize %></span>
+          <div class="run-status">
+            <span class="pill"><%= run.status.humanize %></span>
+            <% if (calendar_sync = run.google_syncs.find { |sync| sync.resource_type == GoogleCalendarClient::CALENDAR_RESOURCE_TYPE }) %>
+              <span class="muted">Calendar: <%= calendar_sync.status.humanize %></span>
+            <% end %>
+          </div>
         </div>
       <% end %>
       <% if @booking.booking_runs.empty? %>

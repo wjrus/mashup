@@ -11,6 +11,15 @@ if google_client_id && google_client_secret
       prompt: "select_account",
       access_type: "online",
       scope: "email,profile"
+
+    provider :google_oauth2,
+      google_client_id,
+      google_client_secret,
+      name: "google_calendar",
+      hd: staff_domains,
+      prompt: "consent select_account",
+      access_type: "offline",
+      scope: "email,profile,https://www.googleapis.com/auth/calendar.events"
   end
 else
   Rails.logger.warn("[OmniAuth] Google OAuth provider not configured; login will be unavailable.")

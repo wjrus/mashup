@@ -1,0 +1,25 @@
+<% content_for :title, "Settings" %>
+
+<div class="page-header">
+  <div>
+    <p class="eyebrow">Administration</p>
+    <h1>Settings</h1>
+  </div>
+</div>
+
+<section class="panel settings-panel">
+  <div>
+    <h2>Google Calendar</h2>
+    <% if current_user.google_calendar_connected? %>
+      <p class="muted">Connected as <%= current_user.email %> on <%= current_user.google_calendar_connected_at.to_fs(:long) %>.</p>
+    <% else %>
+      <p class="muted">Connect the shared booking calendar before syncing runs.</p>
+    <% end %>
+  </div>
+
+  <% if ENV["GOOGLE_CLIENT_ID"].present? && ENV["GOOGLE_CLIENT_SECRET"].present? %>
+    <%= button_to current_user.google_calendar_connected? ? "Reconnect calendar" : "Connect calendar", "/auth/google_calendar", method: :post, data: { turbo: false }, class: "primary-button" %>
+  <% else %>
+    <div class="empty-state">Google OAuth credentials are not configured.</div>
+  <% end %>
+</section>

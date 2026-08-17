@@ -61,6 +61,34 @@ class User < ApplicationRecord
     ENV.fetch("STAFF_DOMAINS", DEFAULT_STAFF_DOMAINS.join(",")).split(",").map { |domain| domain.strip.downcase }.reject(&:blank?)
   end
 
+  def connect_google_calendar!(credentials)
+    self.google_access_token = credentials.token
+    self.google_refresh_token = credentials.refresh_token if credentials.refresh_token.present?
+    self.google_token_expires_at = Time.zone.at(credentials.expires_at) if credentials.expires_at.present?
+    self.google_calendar_connected_at = Time.current
+    save!
+  end
+
+  def google_calendar_connected?
+    google_refresh_token.present? || google_access_token.present?
+  end
+
+  def google_access_token
+    decrypt_google_credential(google_access_token_encrypted)
+  end
+
+  def google_access_token=(value)
+    self.google_access_token_encrypted = encrypt_google_credential(value)
+  end
+
+  def google_refresh_token
+    decrypt_google_credential(google_refresh_token_encrypted)
+  end
+
+  def google_refresh_token=(value)
+    self.google_refresh_token_encrypted = encrypt_google_credential(value)
+  end
+
   private
 
   def email_is_authorized_for_staff_access
@@ -70,4 +98,25 @@ class User < ApplicationRecord
   def apply_access_role
     self.role = self.class.admin_emails.include?(email.to_s.downcase) ? :admin : :staff
   end
+
+  def encrypt_google_credential(value)
+    return if value.blank?
+
+    self.class.send(:google_credential_encryptor).encrypt_and_sign(value)
+  end
+
+  def decrypt_google_credential(value)
+    return if value.blank?
+
+    self.class.send(:google_credential_encryptor).decrypt_and_verify(value)
+  end
+
+  def self.google_credential_encryptor
+    @google_credential_encryptor ||= begin
+      key = Rails.application.key_generator.generate_key("google-calendar-oauth", ActiveSupport::MessageEncryptor.key_len)
+      ActiveSupport::MessageEncryptor.new(key)
+    end
+  end
+
+  private_class_method :google_credential_encryptor
 end

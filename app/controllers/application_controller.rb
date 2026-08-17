@@ -19,4 +19,10 @@ class ApplicationController < ActionController::Base
     session[:return_to] = request.fullpath if request.get? || request.head?
     redirect_to login_path, alert: "Please sign in to continue."
   end
+
+  def require_admin!
+    return if current_user&.admin?
+
+    redirect_to root_path, alert: "Administrator access is required."
+  end
 end

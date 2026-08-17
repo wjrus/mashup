@@ -12,6 +12,8 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "dashboard#show"
 
+  resource :settings, only: :show
+
   get "login", to: "sessions#new", as: :login
   get "auth/:provider/callback", to: "sessions#create"
   post "auth/:provider/callback", to: "sessions#create"
@@ -22,6 +24,7 @@ Rails.application.routes.draw do
 
   resources :patrons, except: :destroy
   resources :bookings, except: :destroy do
+    post :sync_calendar, on: :member
     resources :booking_documents, only: %i[show create] do
       get :open, on: :member
     end
