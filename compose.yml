@@ -1,0 +1,46 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: bash -lc "bundle install && bin/rails db:prepare && bin/rails server -b 0.0.0.0"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      RAILS_ENV: development
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: mashup_development
+      POSTGRES_USER: mashup
+      POSTGRES_PASSWORD: mashup
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "${MASHUP_PORT:-3000}:3000"
+    volumes:
+      - .:/rails
+      - bundle:/usr/local/bundle
+      - rails_storage:/rails/storage
+
+  postgres:
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_DB: mashup_development
+      POSTGRES_USER: mashup
+      POSTGRES_PASSWORD: mashup
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mashup -d mashup_development"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "${POSTGRES_BIND:-127.0.0.1}:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  bundle:
+  postgres_data:
+  rails_storage:

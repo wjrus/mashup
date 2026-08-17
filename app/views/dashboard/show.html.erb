@@ -1,0 +1,70 @@
+<% content_for :title, "Dashboard" %>
+
+<div class="page-header">
+  <div>
+    <p class="eyebrow">Theatre operations</p>
+    <h1>Booking Dashboard</h1>
+  </div>
+  <div class="actions">
+    <%= link_to "New booking", new_booking_path, class: "primary-button" %>
+    <%= link_to "New patron", new_patron_path, class: "secondary-button" %>
+  </div>
+</div>
+
+<section class="stats-grid">
+  <div class="stat">
+    <span>Bookings</span>
+    <strong><%= @booking_count %></strong>
+  </div>
+  <div class="stat">
+    <span>Patrons</span>
+    <strong><%= @patron_count %></strong>
+  </div>
+  <div class="stat">
+    <span>Upcoming runs</span>
+    <strong><%= @upcoming_runs.size %></strong>
+  </div>
+</section>
+
+<section class="content-grid">
+  <div>
+    <div class="section-heading">
+      <h2>Upcoming Runs</h2>
+      <%= link_to "View bookings", bookings_path %>
+    </div>
+    <div class="list">
+      <% @upcoming_runs.each do |run| %>
+        <%= link_to booking_path(run.booking), class: "list-row" do %>
+          <div>
+            <strong><%= run.booking.title %></strong>
+            <span><%= run.booking.patron.name %> · <%= run.space.name %></span>
+          </div>
+          <time><%= run.starts_at.to_fs(:short) %></time>
+        <% end %>
+      <% end %>
+      <% if @upcoming_runs.empty? %>
+        <div class="empty-state">No upcoming runs yet.</div>
+      <% end %>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-heading">
+      <h2>Active Bookings</h2>
+    </div>
+    <div class="list">
+      <% @active_bookings.each do |booking| %>
+        <%= link_to booking_path(booking), class: "list-row" do %>
+          <div>
+            <strong><%= booking.title %></strong>
+            <span><%= booking.patron.name %> · <%= booking.display_type %></span>
+          </div>
+          <span class="pill"><%= booking.status.humanize %></span>
+        <% end %>
+      <% end %>
+      <% if @active_bookings.empty? %>
+        <div class="empty-state">No active bookings yet.</div>
+      <% end %>
+    </div>
+  </div>
+</section>

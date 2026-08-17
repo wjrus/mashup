@@ -1,0 +1,99 @@
+<div class="page-header">
+  <div>
+    <p class="eyebrow">Booking record</p>
+    <h1><%= booking.persisted? ? "Edit #{booking.title}" : "New Booking" %></h1>
+  </div>
+</div>
+
+<%= render "shared/errors", record: booking %>
+
+<%= form_with model: booking, class: "form" do |form| %>
+  <section class="form-grid">
+    <div>
+      <%= form.label :title %>
+      <%= form.text_field :title, required: true %>
+    </div>
+    <div>
+      <%= form.label :patron_id, "Patron" %>
+      <%= form.collection_select :patron_id, Patron.order(:name), :id, :name, { prompt: "Choose a patron" }, required: true %>
+    </div>
+    <div>
+      <%= form.label :primary_contact_id, "Primary contact" %>
+      <%= form.collection_select :primary_contact_id, Contact.includes(:patron).order(:last_name, :first_name), :id, ->(contact) { "#{contact.name} (#{contact.patron.name})" }, { include_blank: "None" } %>
+    </div>
+    <div>
+      <%= form.label :booking_type %>
+      <%= form.select :booking_type, Booking.booking_types.keys.map { |key| [key.humanize, key] } %>
+    </div>
+    <div>
+      <%= form.label :status %>
+      <%= form.select :status, Booking.statuses.keys.map { |key| [key.humanize, key] } %>
+    </div>
+    <div>
+      <%= form.label :contract_status %>
+      <%= form.select :contract_status, Booking.contract_statuses.keys.map { |key| [key.humanize, key] } %>
+    </div>
+    <div>
+      <%= form.label :starts_on %>
+      <%= form.date_field :starts_on, required: true %>
+    </div>
+    <div>
+      <%= form.label :ends_on %>
+      <%= form.date_field :ends_on, required: true %>
+    </div>
+    <div>
+      <%= form.label :estimated_attendance %>
+      <%= form.number_field :estimated_attendance, min: 0 %>
+    </div>
+    <label class="check">
+      <%= form.check_box :public_event %>
+      Public event
+    </label>
+  </section>
+
+  <section class="panel">
+    <h2>Runs</h2>
+    <%= form.fields_for :booking_runs do |run_fields| %>
+      <div class="nested-form">
+        <div>
+          <%= run_fields.label :space_id, "Space" %>
+          <%= run_fields.collection_select :space_id, Space.where(active: true).order(:name), :id, :name, { include_blank: "Choose a space" } %>
+        </div>
+        <div>
+          <%= run_fields.label :starts_at %>
+          <%= run_fields.datetime_field :starts_at %>
+        </div>
+        <div>
+          <%= run_fields.label :ends_at %>
+          <%= run_fields.datetime_field :ends_at %>
+        </div>
+        <div>
+          <%= run_fields.label :status %>
+          <%= run_fields.select :status, BookingRun.statuses.keys.map { |key| [key.humanize, key] } %>
+        </div>
+        <% if run_fields.object.persisted? %>
+          <label class="check">
+            <%= run_fields.check_box :_destroy %>
+            Remove
+          </label>
+        <% end %>
+      </div>
+    <% end %>
+  </section>
+
+  <section class="form-grid">
+    <div>
+      <%= form.label :description %>
+      <%= form.text_area :description, rows: 5 %>
+    </div>
+    <div>
+      <%= form.label :internal_notes %>
+      <%= form.text_area :internal_notes, rows: 5 %>
+    </div>
+  </section>
+
+  <div class="form-actions">
+    <%= form.submit class: "primary-button" %>
+    <%= link_to "Cancel", booking.persisted? ? booking : bookings_path, class: "secondary-button" %>
+  </div>
+<% end %>

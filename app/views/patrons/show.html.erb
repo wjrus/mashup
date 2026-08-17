@@ -1,0 +1,51 @@
+<% content_for :title, @patron.name %>
+
+<div class="page-header">
+  <div>
+    <p class="eyebrow"><%= @patron.display_type %></p>
+    <h1><%= @patron.name %></h1>
+  </div>
+  <div class="actions">
+    <%= link_to "Edit patron", edit_patron_path(@patron), class: "secondary-button" %>
+    <%= link_to "New booking", new_booking_path(booking: { patron_id: @patron.id }), class: "primary-button" %>
+  </div>
+</div>
+
+<section class="content-grid">
+  <div class="panel">
+    <h2>Contacts</h2>
+    <% @patron.contacts.each do |contact| %>
+      <div class="detail-row">
+        <strong><%= contact.name %></strong>
+        <span><%= [contact.title, contact.email, contact.phone].compact_blank.join(" · ") %></span>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="panel">
+    <h2>Details</h2>
+    <dl>
+      <dt>Email</dt><dd><%= @patron.email.presence || "None" %></dd>
+      <dt>Phone</dt><dd><%= @patron.phone.presence || "None" %></dd>
+      <dt>Address</dt><dd><%= [@patron.address_line1, @patron.address_line2, @patron.city, @patron.state, @patron.postal_code].compact_blank.join(", ").presence || "None" %></dd>
+    </dl>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Recent Bookings</h2>
+  <div class="list">
+    <% @bookings.each do |booking| %>
+      <%= link_to booking, class: "list-row" do %>
+        <div>
+          <strong><%= booking.title %></strong>
+          <span><%= booking.date_span %></span>
+        </div>
+        <span class="pill"><%= booking.status.humanize %></span>
+      <% end %>
+    <% end %>
+    <% if @bookings.empty? %>
+      <div class="empty-state">No bookings for this patron yet.</div>
+    <% end %>
+  </div>
+</section>

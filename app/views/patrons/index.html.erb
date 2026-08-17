@@ -1,0 +1,34 @@
+<% content_for :title, "Patrons" %>
+
+<div class="page-header">
+  <div>
+    <p class="eyebrow">People and organizations</p>
+    <h1>Patrons</h1>
+  </div>
+  <%= link_to "New patron", new_patron_path, class: "primary-button" %>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Contact</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @patrons.each do |patron| %>
+        <tr>
+          <td><strong><%= link_to patron.name, patron %></strong></td>
+          <td><%= patron.display_type %></td>
+          <td><span class="pill"><%= patron.status.delete_prefix("status_").humanize %></span></td>
+          <td><%= patron.email.presence || patron.phone.presence || patron.contacts.first&.email %></td>
+          <td><%= link_to "Edit", edit_patron_path(patron) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

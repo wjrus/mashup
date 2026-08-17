@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: Mainstage
+  capacity: 1
+  active: false
+  description: MyText
+
+two:
+  name: Black Box
+  capacity: 1
+  active: false
+  description: MyText

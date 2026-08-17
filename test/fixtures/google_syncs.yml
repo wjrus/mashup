@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  syncable: one
+  syncable_type: Booking
+  provider: MyString
+  resource_type: MyString
+  resource_id: MyString
+  status: 1
+  last_synced_at: 2026-07-09 12:13:14
+  error_message: MyText
+  metadata: {}
+
+two:
+  syncable: two
+  syncable_type: Booking
+  provider: MyString
+  resource_type: MyString
+  resource_id: MyString
+  status: 1
+  last_synced_at: 2026-07-09 12:13:14
+  error_message: MyText
+  metadata: {}

@@ -1,0 +1,103 @@
+<% content_for :title, @booking.title %>
+
+<div class="page-header">
+  <div>
+    <p class="eyebrow"><%= @booking.display_type %></p>
+    <h1><%= @booking.title %></h1>
+    <p class="subtitle"><%= link_to @booking.patron.name, @booking.patron %> · <%= @booking.date_span %></p>
+  </div>
+  <div class="actions">
+    <%= link_to "Edit booking", edit_booking_path(@booking), class: "secondary-button" %>
+    <%= link_to "All bookings", bookings_path, class: "secondary-button" %>
+  </div>
+</div>
+
+<section class="content-grid">
+  <div class="panel">
+    <h2>Schedule</h2>
+    <div class="list">
+      <% @booking.booking_runs.chronological.includes(:space).each do |run| %>
+        <div class="list-row">
+          <div>
+            <strong><%= run.space.name %></strong>
+            <span><%= run.time_span %></span>
+          </div>
+          <span class="pill"><%= run.status.humanize %></span>
+        </div>
+      <% end %>
+      <% if @booking.booking_runs.empty? %>
+        <div class="empty-state">No individual runs have been scheduled.</div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Booking Details</h2>
+    <dl>
+      <dt>Status</dt><dd><%= @booking.status.humanize %></dd>
+      <dt>Contract</dt><dd><%= @booking.contract_status.humanize %></dd>
+      <dt>Public event</dt><dd><%= @booking.public_event? ? "Yes" : "No" %></dd>
+      <dt>Attendance</dt><dd><%= @booking.estimated_attendance.presence || "Unknown" %></dd>
+      <dt>Primary contact</dt><dd><%= @booking.primary_contact&.label || "None selected" %></dd>
+    </dl>
+  </div>
+</section>
+
+<section class="content-grid">
+  <div class="panel">
+    <h2>Documents</h2>
+    <div class="list">
+      <% @booking.booking_documents.each do |document| %>
+        <% next unless document.persisted? %>
+        <div class="list-row">
+          <div>
+            <strong><%= document.name %></strong>
+            <span><%= document.document_type.humanize %> · <%= document.status.humanize %></span>
+          </div>
+          <% if document.google_drive_url.present? %>
+            <%= link_to "Drive", document.google_drive_url, target: "_blank", rel: "noopener" %>
+          <% elsif document.file.attached? %>
+            <%= link_to "Download", rails_blob_path(document.file, disposition: "attachment") %>
+          <% end %>
+        </div>
+      <% end %>
+      <% if @booking.booking_documents.select(&:persisted?).empty? %>
+        <div class="empty-state">No documents yet.</div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Add Document</h2>
+    <%= form_with model: [@booking, @booking_document], class: "compact-form" do |form| %>
+      <%= form.label :name %>
+      <%= form.text_field :name, required: true %>
+
+      <%= form.label :document_type %>
+      <%= form.select :document_type, BookingDocument.document_types.keys.map { |key| [key.humanize, key] } %>
+
+      <%= form.label :status %>
+      <%= form.select :status, BookingDocument.statuses.keys.map { |key| [key.humanize, key] } %>
+
+      <%= form.label :google_drive_url, "Google Drive URL" %>
+      <%= form.url_field :google_drive_url %>
+
+      <%= form.label :file %>
+      <%= form.file_field :file %>
+
+      <%= form.submit "Add document", class: "primary-button" %>
+    <% end %>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Notes</h2>
+  <div class="note-block">
+    <h3>Description</h3>
+    <%= simple_format(@booking.description.presence || "No public-facing description yet.") %>
+  </div>
+  <div class="note-block">
+    <h3>Internal Notes</h3>
+    <%= simple_format(@booking.internal_notes.presence || "No internal notes yet.") %>
+  </div>
+</section>

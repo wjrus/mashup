@@ -1,0 +1,14 @@
+<% content_for :title, "Sign in" %>
+
+<section class="auth-panel">
+  <h1>Mashup Bookings</h1>
+  <p>Internal booking management for patrons, runs, contracts, calendar sync, and production notes.</p>
+
+  <% if ENV["GOOGLE_CLIENT_ID"].present? && ENV["GOOGLE_CLIENT_SECRET"].present? %>
+    <%= button_to "Sign in with Google", "/auth/google_oauth2", method: :post, data: { turbo: false }, class: "primary-button" %>
+  <% else %>
+    <div class="empty-state">
+      Google OAuth is not configured yet. Set <code>GOOGLE_CLIENT_ID</code> and <code>GOOGLE_CLIENT_SECRET</code>.
+    </div>
+  <% end %>
+</section>

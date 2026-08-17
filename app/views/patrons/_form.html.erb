@@ -1,0 +1,106 @@
+<div class="page-header">
+  <div>
+    <p class="eyebrow">Patron record</p>
+    <h1><%= patron.persisted? ? "Edit #{patron.name}" : "New Patron" %></h1>
+  </div>
+</div>
+
+<%= render "shared/errors", record: patron %>
+
+<%= form_with model: patron, class: "form" do |form| %>
+  <section class="form-grid">
+    <div>
+      <%= form.label :name %>
+      <%= form.text_field :name, required: true %>
+    </div>
+    <div>
+      <%= form.label :patron_type %>
+      <%= form.select :patron_type, Patron.patron_types.keys.map { |key| [key.humanize, key] } %>
+    </div>
+    <div>
+      <%= form.label :status %>
+      <%= form.select :status, Patron.statuses.keys.map { |key| [key.delete_prefix("status_").humanize, key] } %>
+    </div>
+    <div>
+      <%= form.label :email %>
+      <%= form.email_field :email %>
+    </div>
+    <div>
+      <%= form.label :phone %>
+      <%= form.telephone_field :phone %>
+    </div>
+    <div>
+      <%= form.label :website %>
+      <%= form.url_field :website %>
+    </div>
+  </section>
+
+  <section class="form-grid">
+    <div>
+      <%= form.label :address_line1 %>
+      <%= form.text_field :address_line1 %>
+    </div>
+    <div>
+      <%= form.label :address_line2 %>
+      <%= form.text_field :address_line2 %>
+    </div>
+    <div>
+      <%= form.label :city %>
+      <%= form.text_field :city %>
+    </div>
+    <div>
+      <%= form.label :state %>
+      <%= form.text_field :state %>
+    </div>
+    <div>
+      <%= form.label :postal_code %>
+      <%= form.text_field :postal_code %>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Contacts</h2>
+    <%= form.fields_for :contacts do |contact_fields| %>
+      <div class="nested-form">
+        <div>
+          <%= contact_fields.label :first_name %>
+          <%= contact_fields.text_field :first_name %>
+        </div>
+        <div>
+          <%= contact_fields.label :last_name %>
+          <%= contact_fields.text_field :last_name %>
+        </div>
+        <div>
+          <%= contact_fields.label :title %>
+          <%= contact_fields.text_field :title %>
+        </div>
+        <div>
+          <%= contact_fields.label :email %>
+          <%= contact_fields.email_field :email %>
+        </div>
+        <div>
+          <%= contact_fields.label :phone %>
+          <%= contact_fields.telephone_field :phone %>
+        </div>
+        <label class="check">
+          <%= contact_fields.check_box :primary_contact %>
+          Primary
+        </label>
+        <label class="check">
+          <%= contact_fields.check_box :billing_contact %>
+          Billing
+        </label>
+      </div>
+    <% end %>
+  </section>
+
+  <div>
+    <%= form.label :notes %>
+    <%= form.text_area :notes, rows: 4 %>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "primary-button" %>
+    <%= link_to "Cancel", patron.persisted? ? patron : patrons_path, class: "secondary-button" %>
+  </div>
+<% end %>

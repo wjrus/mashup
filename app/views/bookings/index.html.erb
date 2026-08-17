@@ -1,0 +1,46 @@
+<% content_for :title, "Bookings" %>
+
+<div class="page-header">
+  <div>
+    <p class="eyebrow">Calendar and contracts</p>
+    <h1>Bookings</h1>
+  </div>
+  <%= link_to "New booking", new_booking_path, class: "primary-button" %>
+</div>
+
+<div class="filters">
+  <%= link_to "All", bookings_path, class: params[:status].blank? ? "pill active" : "pill" %>
+  <% Booking.statuses.keys.each do |status| %>
+    <%= link_to status.humanize, bookings_path(status: status), class: params[:status] == status ? "pill active" : "pill" %>
+  <% end %>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Booking</th>
+        <th>Patron</th>
+        <th>Dates</th>
+        <th>Status</th>
+        <th>Contract</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @bookings.each do |booking| %>
+        <tr>
+          <td>
+            <strong><%= link_to booking.title, booking %></strong>
+            <span class="muted"><%= booking.display_type %></span>
+          </td>
+          <td><%= link_to booking.patron.name, booking.patron %></td>
+          <td><%= booking.date_span %></td>
+          <td><span class="pill"><%= booking.status.humanize %></span></td>
+          <td><%= booking.contract_status.humanize %></td>
+          <td><%= link_to "Edit", edit_booking_path(booking) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
