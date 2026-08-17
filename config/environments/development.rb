@@ -31,6 +31,14 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
+  config.action_mailer.delivery_method = :file
+  config.action_mailer.file_settings = { location: Rails.root.join("tmp/mails") }
+  config.action_mailer.default_url_options = {
+    host: ENV.fetch("APP_HOST", "localhost"),
+    port: ENV.fetch("MASHUP_PORT", 3000),
+    protocol: ENV.fetch("APP_PROTOCOL", "http")
+  }
+
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 

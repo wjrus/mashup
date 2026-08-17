@@ -17,6 +17,8 @@ Rails.application.routes.draw do
   post "auth/:provider/callback", to: "sessions#create"
   get "auth/failure", to: "sessions#failure"
   delete "sign_out", to: "sessions#destroy"
+  post "magic_link", to: "magic_links#create", as: :request_magic_link
+  get "magic_link/:token", to: "magic_links#show", as: :magic_link
 
   resources :patrons, except: :destroy
   resources :bookings, except: :destroy do
