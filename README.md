@@ -24,7 +24,7 @@ cp .env.example .env
 bundle install
 bin/rails db:prepare
 bin/rails db:seed
-bin/rails server
+bin/dev
 ```
 
 Open http://localhost:3000.
