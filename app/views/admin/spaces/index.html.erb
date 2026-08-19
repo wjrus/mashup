@@ -12,23 +12,25 @@
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Capacity</th>
-        <th>Status</th>
-        <th></th>
+        <th scope="col">Name</th>
+        <th scope="col">Capacity</th>
+        <th scope="col">Status</th>
+        <th scope="col" class="action-column"><span class="sr-only">Actions</span></th>
       </tr>
     </thead>
     <tbody>
       <% @spaces.each do |space| %>
         <tr>
-          <td><strong><%= space.name %></strong></td>
+          <th scope="row"><%= space.name %></th>
           <td><%= space.capacity || "Not set" %></td>
           <td><span class="pill"><%= space.active? ? "Active" : "Inactive" %></span></td>
-          <td>
-            <div class="actions">
-              <%= link_to "Edit", edit_admin_space_path(space) %>
+          <td class="action-column">
+            <div class="table-actions">
+              <%= link_to "Edit", edit_admin_space_path(space), class: "secondary-button compact-button", aria: { label: "Edit #{space.name}" } %>
               <%= button_to "Delete", admin_space_path(space), method: :delete,
-                class: "link-button danger-link",
+                class: "secondary-button compact-button danger-link",
+                form: { class: "table-action-form" },
+                aria: { label: "Delete #{space.name}" },
                 data: {
                   confirm_title: "Delete space?",
                   confirm_message: "Delete #{space.name}? This cannot be undone.",

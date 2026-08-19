@@ -13,6 +13,12 @@ class Admin::SpacesControllerTest < ActionDispatch::IntegrationTest
     assert_select "dialog[data-confirmation-target='dialog']"
     assert_select "button[data-confirm-message]", minimum: 1
     assert_select "[data-turbo-confirm]", count: 0
+    assert_select "th[scope='col']", 4
+    assert_select "th[scope='row']", minimum: 1
+    assert_select ".table-actions" do
+      assert_select "a.compact-button[aria-label^='Edit ']"
+      assert_select "form.table-action-form button.compact-button[aria-label^='Delete ']"
+    end
   end
 
   test "administrator can manage spaces" do

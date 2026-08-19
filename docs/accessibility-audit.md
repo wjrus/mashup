@@ -65,13 +65,16 @@ screen-reader context.
 ### A11Y-05: Repeated table actions lack programmatic row context
 
 Severity: High  
+Status: Partially remediated for the Spaces table after this baseline
+
 Relevant criteria: 1.3.1 Info and Relationships (A), 2.4.4 Link Purpose in
 Context (A)
 
-Bookings, patrons, and spaces tables repeat links named only “Edit”; spaces also
-repeat “Delete.” The item-name cells are ordinary `td` elements rather than row
-headers, and the action-column headers are empty, so assistive technology cannot
-reliably derive which record each action affects.
+Bookings and patrons tables still repeat links named only “Edit.” Their item-name
+cells are ordinary `td` elements rather than row headers, and their action-column
+headers are empty, so assistive technology cannot reliably derive which record
+each action affects. The Spaces table now uses scoped row/column headers and
+record-specific accessible action names.
 
 Recommended remediation: make the record-name cell a `th scope="row"`, give
 column headers explicit scope and accessible action text, and label controls as

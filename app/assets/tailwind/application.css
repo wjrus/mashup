@@ -321,7 +321,7 @@
   .primary-button,
   .secondary-button,
   input[type="submit"],
-  button:not(.flash-dismiss):not(.modal-close) {
+  :where(button:not(.flash-dismiss):not(.modal-close)) {
     @apply inline-flex min-h-10 cursor-pointer items-center justify-center rounded-lg border border-transparent px-3.5 py-2 font-bold;
   }
 
@@ -354,8 +354,16 @@
     color: var(--theme-accent-strong);
   }
 
+  .compact-button {
+    @apply min-h-8 whitespace-nowrap rounded-md px-2.5 py-1 text-[0.8125rem];
+  }
+
   .danger-link {
     color: var(--theme-danger);
+  }
+
+  .compact-button.danger-link {
+    border-color: currentColor;
   }
 
   .panel,
@@ -496,6 +504,18 @@
 
   .table-wrap {
     @apply overflow-auto;
+  }
+
+  .action-column {
+    @apply w-px whitespace-nowrap text-right;
+  }
+
+  .table-actions {
+    @apply flex items-center justify-end gap-2;
+  }
+
+  .table-action-form {
+    @apply m-0;
   }
 
   .form {

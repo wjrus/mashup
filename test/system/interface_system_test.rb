@@ -22,7 +22,18 @@ class InterfaceSystemTest < ApplicationSystemTestCase
     space = Space.create!(name: "Temporary room")
     visit admin_spaces_path
 
+    page.current_window.resize_to(390, 844)
+    assert_operator page.evaluate_script("document.documentElement.scrollWidth"), :<=,
+      page.evaluate_script("window.innerWidth")
+    page.current_window.resize_to(1280, 900)
+
     within("tr", text: space.name) do
+      edit_button = find("a", text: "Edit")
+      delete_button = find_button("Delete")
+
+      assert_operator edit_button.rect.height, :<=, 36
+      assert_in_delta edit_button.rect.height, delete_button.rect.height, 1
+      assert_in_delta edit_button.rect.y, delete_button.rect.y, 1
       click_button "Delete"
     end
 
