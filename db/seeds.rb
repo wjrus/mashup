@@ -1,9 +1,14 @@
-[
-  [ "Mainstage", 140, "Primary public performance space" ],
-  [ "Black Box", 60, "Flexible rehearsal, workshop, and small event space" ],
-  [ "Lobby", 75, "Reception and party area" ],
-  [ "Classroom", 30, "Classes, workshops, and meetings" ]
-].each do |name, capacity, description|
+spaces = [ [ "Mainstage", 140, "Primary public performance space" ] ]
+
+if Rails.env.development? || ENV["SEED_DEMO_DATA"] == "true"
+  spaces.concat([
+    [ "Black Box", 60, "Flexible rehearsal, workshop, and small event space" ],
+    [ "Lobby", 75, "Reception and party area" ],
+    [ "Classroom", 30, "Classes, workshops, and meetings" ]
+  ])
+end
+
+spaces.each do |name, capacity, description|
   Space.find_or_create_by!(name: name) do |space|
     space.capacity = capacity
     space.description = description

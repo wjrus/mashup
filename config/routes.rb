@@ -15,7 +15,7 @@ Rails.application.routes.draw do
   resource :settings, only: :show
 
   namespace :admin do
-    resources :spaces, except: %i[show destroy]
+    resources :spaces, except: :show
     resources :users, only: :index
   end
 

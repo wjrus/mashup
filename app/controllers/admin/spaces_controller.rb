@@ -1,5 +1,5 @@
 class Admin::SpacesController < Admin::BaseController
-  before_action :set_space, only: %i[edit update]
+  before_action :set_space, only: %i[edit update destroy]
 
   def index
     @spaces = Space.order(:name)
@@ -27,6 +27,14 @@ class Admin::SpacesController < Admin::BaseController
       redirect_to admin_spaces_path, notice: "Space updated."
     else
       render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    if @space.destroy
+      redirect_to admin_spaces_path, notice: "Space deleted."
+    else
+      redirect_to admin_spaces_path, alert: @space.errors.full_messages.to_sentence
     end
   end
 

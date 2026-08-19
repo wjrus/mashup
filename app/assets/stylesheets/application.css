@@ -167,6 +167,10 @@ input[type="submit"] {
   padding: 0;
 }
 
+.danger-link {
+  color: var(--warn);
+}
+
 .flash,
 .panel,
 .table-wrap,

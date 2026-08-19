@@ -24,7 +24,14 @@
           <td><strong><%= space.name %></strong></td>
           <td><%= space.capacity || "Not set" %></td>
           <td><span class="pill"><%= space.active? ? "Active" : "Inactive" %></span></td>
-          <td><%= link_to "Edit", edit_admin_space_path(space) %></td>
+          <td>
+            <div class="actions">
+              <%= link_to "Edit", edit_admin_space_path(space) %>
+              <%= button_to "Delete", admin_space_path(space), method: :delete,
+                class: "link-button danger-link",
+                data: { turbo_confirm: "Delete #{space.name}? This cannot be undone." } %>
+            </div>
+          </td>
         </tr>
       <% end %>
     </tbody>

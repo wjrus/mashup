@@ -21,4 +21,28 @@ class Admin::SpacesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
     assert_equal "Administrator access is required.", flash[:alert]
   end
+
+  test "administrator can delete an unused space" do
+    sign_in_as(users(:one))
+    space = Space.create!(name: "Unused room")
+
+    assert_difference("Space.count", -1) do
+      delete admin_space_path(space)
+    end
+
+    assert_redirected_to admin_spaces_path
+    assert_equal "Space deleted.", flash[:notice]
+  end
+
+  test "administrator cannot delete a space with booking runs" do
+    sign_in_as(users(:one))
+    space = spaces(:one)
+
+    assert_no_difference("Space.count") do
+      delete admin_space_path(space)
+    end
+
+    assert_redirected_to admin_spaces_path
+    assert_equal "Cannot delete record because dependent booking runs exist", flash[:alert]
+  end
 end
