@@ -4,11 +4,13 @@
   <section class="form-grid">
     <div>
       <%= form.label :name %>
-      <%= form.text_field :name, required: true %>
+      <%= form.text_field :name, **accessible_field_options(form, :name, required: true) %>
+      <%= field_error form, :name %>
     </div>
     <div>
       <%= form.label :capacity %>
-      <%= form.number_field :capacity, min: 1 %>
+      <%= form.number_field :capacity, **accessible_field_options(form, :capacity, min: 1) %>
+      <%= field_error form, :capacity %>
     </div>
     <label class="check">
       <%= form.check_box :active %>

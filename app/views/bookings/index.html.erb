@@ -9,36 +9,37 @@
 </div>
 
 <div class="filters">
-  <%= link_to "All", bookings_path, class: params[:status].blank? ? "pill active" : "pill" %>
+  <%= link_to "All", bookings_path, class: params[:status].blank? ? "pill active" : "pill", aria: { current: params[:status].blank? ? "page" : nil } %>
   <% Booking.statuses.keys.each do |status| %>
-    <%= link_to status.humanize, bookings_path(status: status), class: params[:status] == status ? "pill active" : "pill" %>
+    <%= link_to status.humanize, bookings_path(status: status), class: params[:status] == status ? "pill active" : "pill", aria: { current: params[:status] == status ? "page" : nil } %>
   <% end %>
 </div>
 
 <div class="table-wrap">
   <table>
+    <caption class="sr-only">Bookings</caption>
     <thead>
       <tr>
-        <th>Booking</th>
-        <th>Patron</th>
-        <th>Dates</th>
-        <th>Status</th>
-        <th>Contract</th>
-        <th></th>
+        <th scope="col">Booking</th>
+        <th scope="col">Patron</th>
+        <th scope="col">Dates</th>
+        <th scope="col">Status</th>
+        <th scope="col">Contract</th>
+        <th scope="col" class="action-column"><span class="sr-only">Actions</span></th>
       </tr>
     </thead>
     <tbody>
       <% @bookings.each do |booking| %>
         <tr>
-          <td>
+          <th scope="row">
             <strong><%= link_to booking.title, booking %></strong>
             <span class="muted"><%= booking.display_type %></span>
-          </td>
+          </th>
           <td><%= link_to booking.patron.name, booking.patron %></td>
           <td><%= booking.date_span %></td>
           <td><span class="pill"><%= booking.status.humanize %></span></td>
           <td><%= booking.contract_status.humanize %></td>
-          <td><%= link_to "Edit", edit_booking_path(booking) %></td>
+          <td class="action-column"><%= link_to "Edit", edit_booking_path(booking), aria: { label: "Edit #{booking.title}" } %></td>
         </tr>
       <% end %>
     </tbody>

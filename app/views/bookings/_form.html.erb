@@ -18,7 +18,8 @@
   <section class="form-grid">
     <div>
       <%= form.label :title %>
-      <%= form.text_field :title, required: true %>
+      <%= form.text_field :title, **accessible_field_options(form, :title, required: true) %>
+      <%= field_error form, :title %>
     </div>
     <div>
       <%= form.label :patron_id, "Patron" %>
@@ -27,7 +28,8 @@
     <div>
       <%= form.label :primary_contact_id, "Primary contact" %>
       <% contact_options = Contact.includes(:patron).order(:last_name, :first_name).map { |contact| ["#{contact.name} (#{contact.patron.name})", contact.id, { data: { patron_id: contact.patron_id } }] } %>
-      <%= form.select :primary_contact_id, contact_options, { include_blank: "None" }, data: { patron_contact_target: "contact" } %>
+      <%= form.select :primary_contact_id, contact_options, { include_blank: "None" }, accessible_field_options(form, :primary_contact, data: { patron_contact_target: "contact" }) %>
+      <%= field_error form, :primary_contact %>
     </div>
     <div>
       <%= form.label :booking_type %>
@@ -43,15 +45,18 @@
     </div>
     <div>
       <%= form.label :starts_on %>
-      <%= form.date_field :starts_on, required: true %>
+      <%= form.date_field :starts_on, **accessible_field_options(form, :starts_on, required: true) %>
+      <%= field_error form, :starts_on %>
     </div>
     <div>
       <%= form.label :ends_on %>
-      <%= form.date_field :ends_on, required: true %>
+      <%= form.date_field :ends_on, **accessible_field_options(form, :ends_on, required: true) %>
+      <%= field_error form, :ends_on %>
     </div>
     <div>
       <%= form.label :estimated_attendance %>
-      <%= form.number_field :estimated_attendance, min: 0 %>
+      <%= form.number_field :estimated_attendance, **accessible_field_options(form, :estimated_attendance, min: 0) %>
+      <%= field_error form, :estimated_attendance %>
     </div>
     <label class="check">
       <%= form.check_box :public_event %>
@@ -59,11 +64,12 @@
     </label>
   </section>
 
-  <section class="panel" data-controller="nested-form">
+  <section class="panel" data-controller="nested-form" data-nested-form-item-name-value="Run">
     <div class="section-heading">
       <h2>Runs</h2>
-      <button type="button" class="secondary-button" data-action="nested-form#add">Add run</button>
+      <button type="button" class="secondary-button" data-nested-form-target="addButton" data-action="nested-form#add">Add run</button>
     </div>
+    <p class="sr-only" role="status" aria-live="polite" data-nested-form-target="status"></p>
 
     <template data-nested-form-target="template">
       <%= form.fields_for :booking_runs, BookingRun.new, child_index: "NEW_RECORD" do |run_fields| %>

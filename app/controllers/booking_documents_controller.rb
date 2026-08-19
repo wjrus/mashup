@@ -33,7 +33,8 @@ class BookingDocumentsController < ApplicationController
     if @document.save
       redirect_to @booking, notice: "Document added."
     else
-      redirect_to @booking, alert: @document.errors.full_messages.to_sentence
+      @booking_document = @document
+      render "bookings/show", status: :unprocessable_entity
     end
   end
 

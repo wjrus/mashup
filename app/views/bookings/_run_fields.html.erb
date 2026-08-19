@@ -7,11 +7,13 @@
   </div>
   <div>
     <%= run_fields.label :starts_at %>
-    <%= run_fields.datetime_field :starts_at %>
+    <%= run_fields.datetime_field :starts_at, **accessible_field_options(run_fields, :starts_at) %>
+    <%= field_error run_fields, :starts_at %>
   </div>
   <div>
     <%= run_fields.label :ends_at %>
-    <%= run_fields.datetime_field :ends_at %>
+    <%= run_fields.datetime_field :ends_at, **accessible_field_options(run_fields, :ends_at) %>
+    <%= field_error run_fields, :ends_at %>
   </div>
   <div>
     <%= run_fields.label :status %>

@@ -1,12 +1,18 @@
 <div class="flash <%= kind %>"
      role="<%= kind == :alert ? "alert" : "status" %>"
+     aria-atomic="true"
      data-controller="dismissible"
-     data-dismissible-duration-value="10000">
+     <% if kind == :notice %>
+       data-dismissible-duration-value="10000"
+       data-action="mouseenter->dismissible#pause mouseleave->dismissible#resume focusin->dismissible#pause focusout->dismissible#resume"
+     <% end %>>
   <div class="flash-content">
     <p class="flash-message"><%= message %></p>
     <button type="button" class="flash-dismiss" aria-label="Dismiss message" data-action="dismissible#dismiss">×</button>
   </div>
-  <div class="flash-progress-track" aria-hidden="true">
-    <div class="flash-progress" data-dismissible-target="progress"></div>
-  </div>
+  <% if kind == :notice %>
+    <div class="flash-progress-track" aria-hidden="true">
+      <div class="flash-progress" data-dismissible-target="progress"></div>
+    </div>
+  <% end %>
 </div>

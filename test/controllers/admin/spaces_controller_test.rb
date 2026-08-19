@@ -8,6 +8,9 @@ class Admin::SpacesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "body[data-controller~='confirmation']"
+    assert_select "a.skip-link[href='#main-content']", text: "Skip to main content"
+    assert_select "main#main-content[tabindex='-1']"
+    assert_select "nav[aria-label='Primary navigation'] a[aria-current='page']", text: "Settings"
     assert_select "summary[aria-label='Account menu']"
     assert_select "select[data-theme-select] option", 6
     assert_select "dialog[data-confirmation-target='dialog']"
@@ -31,6 +34,18 @@ class Admin::SpacesControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_redirected_to admin_spaces_path
+  end
+
+  test "invalid space fields are identified and described" do
+    sign_in_as(users(:one))
+
+    post admin_spaces_path, params: { space: { name: "", capacity: 0 } }
+
+    assert_response :unprocessable_entity
+    assert_select ".error-summary[role='alert'][tabindex='-1'][data-controller='error-summary']"
+    assert_select "#space_name[aria-invalid='true'][aria-describedby='space_name_error']"
+    assert_select "#space_name_error.field-error", text: "can't be blank"
+    assert_select "#space_capacity[aria-invalid='true'][aria-describedby='space_capacity_error']"
   end
 
   test "staff cannot manage spaces" do
@@ -69,5 +84,10 @@ class Admin::SpacesControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to admin_spaces_path
     assert_equal "Cannot delete record because dependent booking runs exist", flash[:alert]
+
+    follow_redirect!
+    assert_select "main#main-content .flash.alert[role='alert'][aria-atomic='true']"
+    assert_select ".flash.alert[data-dismissible-duration-value]", count: 0
+    assert_select ".flash.alert .flash-progress", count: 0
   end
 end

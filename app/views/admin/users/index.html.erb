@@ -9,18 +9,19 @@
 
 <div class="table-wrap">
   <table>
+    <caption class="sr-only">Staff accounts</caption>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Access</th>
-        <th>Last sign-in</th>
+        <th scope="col">Name</th>
+        <th scope="col">Email</th>
+        <th scope="col">Access</th>
+        <th scope="col">Last sign-in</th>
       </tr>
     </thead>
     <tbody>
       <% @users.each do |user| %>
         <tr>
-          <td><strong><%= user.name %></strong></td>
+          <th scope="row"><%= user.name.presence || user.email %></th>
           <td><%= user.email %></td>
           <td><span class="pill"><%= user.role.humanize %></span></td>
           <td><%= user.last_sign_in_at&.to_fs(:long) || "Never" %></td>

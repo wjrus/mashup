@@ -18,6 +18,40 @@ class InterfaceSystemTest < ApplicationSystemTestCase
     assert_equal "paper", page.evaluate_script("document.documentElement.dataset.themeChoice")
   end
 
+  test "keyboard users can skip navigation and manage dynamic contact rows" do
+    visit edit_patron_path(patrons(:one))
+
+    find("body").send_keys(:tab)
+    assert_equal "Skip to main content", page.evaluate_script("document.activeElement.textContent.trim()")
+    find(".skip-link").send_keys(:enter)
+    assert_equal "main-content", page.evaluate_script("document.activeElement.id")
+
+    click_button "Add contact"
+    assert_selector "[role='status']", text: "Contact added.", visible: :all
+    assert_match(/first_name\z/, page.evaluate_script("document.activeElement.id"))
+
+    within all("[data-nested-form-row]").last do
+      click_button "Remove contact"
+    end
+    within("dialog[open]") do
+      click_button "Remove contact"
+    end
+
+    assert_selector "[role='status']", text: "Contact removed.", visible: :all
+    assert_equal "Remove contact", page.evaluate_script("document.activeElement.textContent.trim()")
+  end
+
+  test "validation errors receive focus and describe invalid fields" do
+    visit new_admin_space_path
+    page.execute_script("document.querySelector('#space_name').removeAttribute('required')")
+    fill_in "Capacity", with: "1"
+    click_button "Create Space"
+
+    assert_selector ".error-summary:focus"
+    assert_selector "#space_name[aria-invalid='true'][aria-describedby='space_name_error']"
+    assert_text "Name can't be blank"
+  end
+
   test "destructive action uses the custom dialog and timed dismissible flash" do
     space = Space.create!(name: "Temporary room")
     visit admin_spaces_path

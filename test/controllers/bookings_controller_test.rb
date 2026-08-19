@@ -9,7 +9,24 @@ class BookingsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "form[data-confirm-when-field='booking[status]'][data-confirm-when-value='canceled']"
     assert_select "button[data-action='nested-form#remove'][data-confirm-message]", minimum: 1
+    assert_select "[data-controller='nested-form'][data-nested-form-item-name-value='Run']" do
+      assert_select "button[data-nested-form-target='addButton']"
+      assert_select "[role='status'][data-nested-form-target='status']"
+    end
     assert_select "[data-turbo-confirm]", count: 0
+  end
+
+  test "booking index exposes table and current filter semantics" do
+    sign_in_as(users(:two))
+
+    get bookings_path(status: "tentative")
+
+    assert_response :success
+    assert_select "a[aria-current='page']", text: "Tentative"
+    assert_select "table caption.sr-only", text: "Bookings"
+    assert_select "thead th[scope='col']", 6
+    assert_select "tbody th[scope='row']", minimum: 1
+    assert_select "a[aria-label^='Edit ']", minimum: 1
   end
 
   test "creates a booking while ignoring an untouched run row" do
@@ -54,5 +71,8 @@ class BookingsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :unprocessable_entity
     assert_includes response.body, "Primary contact must belong to the selected patron"
+    assert_select ".error-summary[tabindex='-1'][data-controller='error-summary']"
+    assert_select "#booking_primary_contact_id[aria-invalid='true'][aria-describedby='booking_primary_contact_error']"
+    assert_select "#booking_primary_contact_error.field-error", text: "must belong to the selected patron"
   end
 end

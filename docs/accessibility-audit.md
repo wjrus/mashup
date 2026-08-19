@@ -1,145 +1,116 @@
-# Accessibility Audit Baseline
+# Accessibility Audit and Remediation Record
 
-Date: 2026-08-18  
-Baseline: `f4f1a1e`  
+Baseline date: 2026-08-18
+
+Remediation pass: 2026-08-19
+
 Target: WCAG 2.1 Level AA
 
-This is a code-level baseline audit, not a conformance claim. It covers all
-application views, shared layout and components, the five explicit themes plus
-system theme behavior, keyboard-related JavaScript, existing system tests, and
-prior desktop/mobile visual verification. Exact contrast ratios were calculated
-from the authored theme colors.
+This is a code-level audit and remediation record, not a conformance claim. It
+covers application views, shared components, all five explicit themes plus
+system theme behavior, keyboard-related JavaScript, request tests, and browser
+system tests.
 
-The browser-assisted DOM scan could not be completed because the local browser
-session was blocked by its URL security policy after an initial connection
-failure. A future remediation pass must include an automated accessibility scan,
-keyboard-only walkthrough, 200% zoom and 320 CSS-pixel reflow checks, and manual
-VoiceOver testing before making a conformance statement.
+Before making a conformance statement, complete an automated accessibility scan,
+a keyboard-only walkthrough, 200% zoom and 320 CSS-pixel reflow checks, and
+manual VoiceOver testing. The original browser-assisted DOM scan could not run
+because the local browser session was blocked by its URL security policy.
 
-## Blocking Findings
+## Remediated Findings
 
-### A11Y-01: Form control boundaries do not meet non-text contrast
+### A11Y-01: Form control boundaries lacked non-text contrast
 
-Severity: High  
 Relevant criterion: 1.4.11 Non-text Contrast (AA)
 
-Inputs use the panel color for their background, so their border is the visual
-means of identifying the control on panels. Border-to-panel contrast is 1.35:1
-in Light, 1.41:1 in Dark, 1.52:1 in Paper, and 2.58:1 in Amber. Terminal passes
-at 4.06:1. Required component boundaries need 3:1 contrast against adjacent
-colors.
+Status: Remediated
 
-Recommended remediation: add a dedicated control-border token that reaches 3:1
-in every theme without making all decorative panel borders equally prominent.
-Add automated contrast assertions for every supported theme.
+Each theme now has a dedicated control-border token with at least 3:1 contrast
+against its panel surface. Automated tests calculate and enforce control, text,
+muted-text, and focus-indicator contrast for every theme.
 
-### A11Y-02: Flash messages impose an unadjustable ten-second time limit
+### A11Y-02: Flash messages imposed an unadjustable time limit
 
-Severity: High  
 Relevant criterion: 2.2.1 Timing Adjustable (A)
 
-Every notice and alert is removed after ten seconds. A close button lets users
-shorten the time, but there is no way to pause, extend, or disable it. Some
-success notices have an equivalent persistent result in the page, but messages
-such as authentication failures may not.
+Status: Remediated
 
-Recommended remediation: keep the requested countdown for messages whose result
-is also available persistently, but make alerts and unique instructions
-persistent. Alternatively provide a user preference to disable auto-dismissal
-or a conforming pause/extension mechanism.
+Errors and warnings remain until explicitly dismissed. Success notices may
+close after ten seconds, pause while hovered or focused, and remain persistent
+when reduced motion is requested. All messages retain a labeled dismiss button
+and render at the start of main content rather than as a fixed overlay.
 
-### A11Y-04: Removing an existing nested row can lose keyboard focus
+### A11Y-03: Repeated navigation lacked a keyboard skip link
 
-Severity: High  
+Relevant criterion: 2.4.1 Bypass Blocks (A)
+
+Status: Remediated
+
+The first focusable control is a visible-on-focus skip link. Activating it
+explicitly focuses the main landmark, including in browsers that do not move
+focus to fragment targets automatically.
+
+### A11Y-04: Dynamic nested rows could lose keyboard focus
+
 Relevant criterion: 2.4.3 Focus Order (A)
 
-After confirmation, removing a contact or run hides or deletes the button that
-held focus. No surviving element receives focus and no removal result is
-announced. Adding a row also provides no announcement or deliberate focus move.
+Status: Remediated
 
-Recommended remediation: after removal, focus the next row's remove control,
-the previous row, or the Add control; announce the result in an existing live
-region. After addition, focus the first field in the new row and provide concise
-screen-reader context.
+Adding a contact or booking run moves focus to its first field and announces the
+addition. Removing one moves focus to a surviving remove control or the Add
+button and announces the result through a polite live region.
 
-### A11Y-05: Repeated table actions lack programmatic row context
-
-Severity: High  
-Status: Partially remediated for the Spaces table after this baseline
+### A11Y-05: Repeated table actions lacked row context
 
 Relevant criteria: 1.3.1 Info and Relationships (A), 2.4.4 Link Purpose in
 Context (A)
 
-Bookings and patrons tables still repeat links named only “Edit.” Their item-name
-cells are ordinary `td` elements rather than row headers, and their action-column
-headers are empty, so assistive technology cannot reliably derive which record
-each action affects. The Spaces table now uses scoped row/column headers and
-record-specific accessible action names.
+Status: Remediated
 
-Recommended remediation: make the record-name cell a `th scope="row"`, give
-column headers explicit scope and accessible action text, and label controls as
-“Edit [record]” or “Delete [record]” while preserving concise visible text.
+Repeated action controls now include the record name in their accessible label.
+Record names are scoped row headers and action columns have accessible headings.
 
-## Additional Findings
+### A11Y-06: Current navigation and booking filters were visual only
 
-### A11Y-03: Repeated navigation lacks a keyboard-friendly skip link
-
-Severity: Medium  
-Relevant criterion: 2.4.1 Bypass Blocks (A)
-
-The semantic `main` landmark provides a bypass mechanism for assistive
-technologies that support landmark navigation. A visible-on-focus skip link
-would also let keyboard users bypass the brand, primary navigation, and account
-controls without requiring an assistive-technology shortcut.
-
-Recommended remediation: make the first focusable element a “Skip to main
-content” link and give `main` a stable target.
-
-### A11Y-06: Current booking filter state is visual only
-
-Severity: Medium  
 Relevant criteria: 1.3.1 Info and Relationships (A), 4.1.2 Name, Role, Value (A)
 
-The selected booking filter is represented by the `active` class and color.
-Expose it programmatically, for example with `aria-current="page"`.
+Status: Remediated
 
-### A11Y-07: Server validation errors are not associated with fields
+The current primary navigation destination and active booking filter expose
+`aria-current="page"`.
 
-Severity: Medium  
+### A11Y-07: Server validation errors were not associated with fields
+
 Relevant criteria: 1.3.1 Info and Relationships (A), 3.3.1 Error Identification
 (A)
 
-The alert summary identifies errors in text, but invalid inputs are not marked
-with `aria-invalid`, error text is not connected with `aria-describedby`, and
-focus is not directed to the summary or first invalid field after a failed save.
+Status: Remediated
 
-Recommended remediation: render field-level messages with stable IDs, associate
-them with their controls, and add a tested focus strategy while retaining the
-summary.
+Invalid controls expose `aria-invalid`, reference their field-level message with
+`aria-describedby`, and retain an error summary. After an invalid submission,
+the summary receives focus so keyboard and screen-reader users encounter it
+immediately. This applies to top-level forms, nested contacts and runs, and
+booking documents.
 
-### A11Y-08: Data-table relationships should be made explicit
+### A11Y-08: Data-table relationships were not explicit
 
-Severity: Medium  
 Relevant criterion: 1.3.1 Info and Relationships (A)
 
-Tables use `thead` and `th`, but do not declare column scopes, captions, or row
-headers. Add `scope="col"`, useful captions or accessible names, and row headers
-so relationships survive alternate presentation and assistive navigation.
+Status: Remediated
+
+Data tables now have accessible captions, scoped column headers, and scoped row
+headers.
 
 ## Verified Strengths
 
 - Pages declare English, provide descriptive titles, and use a single `main`
   landmark with generally logical heading levels.
-- Rails labels are programmatically associated with the form controls reviewed;
-  native input types and required attributes are used where appropriate.
+- Rails labels are programmatically associated with reviewed controls; native
+  input types and required attributes are used where appropriate.
 - The account disclosure and confirmation modal build on native `details` and
   `dialog`; Escape handling and focus-visible styles are present.
-- Focus indicators have at least 5.11:1 contrast against their adjacent surface
-  in every theme measured.
-- Normal and muted text colors meet 4.5:1 in every theme measured. The lowest
-  measured normal-text pair is Light muted text on the page background at
-  4.70:1.
+- Normal and muted text meet 4.5:1, while controls and focus indicators meet
+  3:1, across every authored theme according to automated contrast tests.
 - Status pills include text and do not communicate state by color alone.
-- Flash messages use `status` or `alert` roles and a labeled dismiss button.
-- The prior narrow-width browser check found no page-level horizontal overflow;
-  wide data tables are contained in dedicated horizontal scrollers.
+- Browser system tests cover skip navigation, dynamic-row focus management,
+  validation error focus and relationships, custom destructive confirmation,
+  dismissible notices, action alignment, and narrow-width overflow.

@@ -24,14 +24,19 @@
   </head>
 
   <body data-controller="confirmation">
+    <a href="#main-content"
+       class="skip-link"
+       data-controller="skip-link"
+       data-action="click->skip-link#skip">Skip to main content</a>
+
     <% if current_user %>
       <header class="topbar">
         <%= link_to "Mashup Bookings", root_path, class: "brand" %>
-        <nav>
-          <%= link_to "Dashboard", root_path %>
-          <%= link_to "Bookings", bookings_path %>
-          <%= link_to "Patrons", patrons_path %>
-          <%= link_to "Settings", settings_path if current_user.admin? %>
+        <nav aria-label="Primary navigation">
+          <%= link_to "Dashboard", root_path, aria: { current: controller_name == "dashboard" ? "page" : nil } %>
+          <%= link_to "Bookings", bookings_path, aria: { current: controller_name.in?(%w[bookings booking_documents]) ? "page" : nil } %>
+          <%= link_to "Patrons", patrons_path, aria: { current: controller_name == "patrons" ? "page" : nil } %>
+          <%= link_to "Settings", settings_path, aria: { current: (controller_name == "settings" || controller_path.start_with?("admin/")) ? "page" : nil } if current_user.admin? %>
         </nav>
         <details class="account-menu" data-controller="menu">
           <summary aria-label="Account menu" aria-haspopup="menu">
@@ -56,14 +61,14 @@
       </header>
     <% end %>
 
-    <% if notice.present? || alert.present? %>
-      <div class="flash-region" aria-live="polite">
-        <%= render "shared/flash", kind: :notice, message: notice if notice.present? %>
-        <%= render "shared/flash", kind: :alert, message: alert if alert.present? %>
-      </div>
-    <% end %>
+    <main id="main-content" class="page" tabindex="-1">
+      <% if notice.present? || alert.present? %>
+        <div class="flash-region" aria-live="polite">
+          <%= render "shared/flash", kind: :notice, message: notice if notice.present? %>
+          <%= render "shared/flash", kind: :alert, message: alert if alert.present? %>
+        </div>
+      <% end %>
 
-    <main class="page">
       <%= yield %>
     </main>
 

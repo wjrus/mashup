@@ -75,9 +75,11 @@
 
   <div class="panel">
     <h2>Add Document</h2>
+    <%= render "shared/errors", record: @booking_document %>
     <%= form_with model: [@booking, @booking_document], class: "compact-form" do |form| %>
       <%= form.label :name %>
-      <%= form.text_field :name, required: true %>
+      <%= form.text_field :name, **accessible_field_options(form, :name, required: true) %>
+      <%= field_error form, :name %>
 
       <%= form.label :document_type %>
       <%= form.select :document_type, BookingDocument.document_types.keys.map { |key| [key.humanize, key] } %>
@@ -86,10 +88,12 @@
       <%= form.select :status, BookingDocument.statuses.keys.map { |key| [key.humanize, key] } %>
 
       <%= form.label :google_drive_url, "Google Drive URL" %>
-      <%= form.url_field :google_drive_url %>
+      <%= form.url_field :google_drive_url, **accessible_field_options(form, :google_drive_url) %>
+      <%= field_error form, :google_drive_url %>
 
       <%= form.label :file %>
-      <%= form.file_field :file %>
+      <%= form.file_field :file, **accessible_field_options(form, :file) %>
+      <%= field_error form, :file %>
 
       <%= form.submit "Add document", class: "primary-button" %>
     <% end %>

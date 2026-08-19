@@ -11,7 +11,8 @@
   <section class="form-grid">
     <div>
       <%= form.label :name %>
-      <%= form.text_field :name, required: true %>
+      <%= form.text_field :name, **accessible_field_options(form, :name, required: true) %>
+      <%= field_error form, :name %>
     </div>
     <div>
       <%= form.label :patron_type %>
@@ -58,11 +59,12 @@
     </div>
   </section>
 
-  <section class="panel" data-controller="nested-form">
+  <section class="panel" data-controller="nested-form" data-nested-form-item-name-value="Contact">
     <div class="section-heading">
       <h2>Contacts</h2>
-      <button type="button" class="secondary-button" data-action="nested-form#add">Add contact</button>
+      <button type="button" class="secondary-button" data-nested-form-target="addButton" data-action="nested-form#add">Add contact</button>
     </div>
+    <p class="sr-only" role="status" aria-live="polite" data-nested-form-target="status"></p>
 
     <template data-nested-form-target="template">
       <%= form.fields_for :contacts, Contact.new, child_index: "NEW_RECORD" do |contact_fields| %>

@@ -17,6 +17,10 @@ class PasswordlessSessionsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to login_path
     assert_equal "If that email is authorized, a sign-in link has been sent.", flash[:notice]
+
+    follow_redirect!
+    assert_select "main#main-content .flash.notice[data-dismissible-duration-value='10000']"
+    assert_select ".flash.notice .flash-progress[data-dismissible-target='progress']"
   end
 
   test "does not create or email an unauthorized account" do
@@ -39,5 +43,10 @@ class PasswordlessSessionsControllerTest < ActionDispatch::IntegrationTest
     get verify_login_path(token: token)
     assert_redirected_to login_path
     assert_equal "That sign-in link is invalid or has expired.", flash[:alert]
+
+    follow_redirect!
+    assert_select "main#main-content .flash.alert[role='alert']"
+    assert_select ".flash.alert[data-dismissible-duration-value]", count: 0
+    assert_select ".flash.alert .flash-progress", count: 0
   end
 end

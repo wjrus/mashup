@@ -8,6 +8,7 @@
   --theme-text: #17202a;
   --theme-muted: #627084;
   --theme-border: #d9dee7;
+  --theme-control-border: #737b87;
   --theme-accent: #0f766e;
   --theme-accent-strong: #115e59;
   --theme-accent-ink: #ffffff;
@@ -28,6 +29,7 @@
   --theme-text: #f8fafc;
   --theme-muted: #cbd5e1;
   --theme-border: #263448;
+  --theme-control-border: #64748b;
   --theme-accent: #5eead4;
   --theme-accent-strong: #99f6e4;
   --theme-accent-ink: #001412;
@@ -47,6 +49,7 @@
   --theme-text: #1f2731;
   --theme-muted: #5f665e;
   --theme-border: #d9cfbb;
+  --theme-control-border: #7b7160;
   --theme-accent: #2d6c68;
   --theme-accent-strong: #1f4f4c;
   --theme-accent-ink: #fffdf6;
@@ -66,6 +69,7 @@
   --theme-text: #39ff88;
   --theme-muted: #8bd8aa;
   --theme-border: #16803d;
+  --theme-control-border: #16803d;
   --theme-accent: #39ff88;
   --theme-accent-strong: #a1ffc7;
   --theme-accent-ink: #001b09;
@@ -86,6 +90,7 @@
   --theme-text: #ffd27a;
   --theme-muted: #d8aa62;
   --theme-border: #7c4a12;
+  --theme-control-border: #a76a23;
   --theme-accent: #ffd27a;
   --theme-accent-strong: #fff1c9;
   --theme-accent-ink: #1a0d02;
@@ -159,7 +164,7 @@
   textarea {
     @apply min-h-10 w-full rounded-lg border px-2.5 py-2 text-base;
     background: var(--theme-panel);
-    border-color: var(--theme-border);
+    border-color: var(--theme-control-border);
     color: var(--theme-text);
     font-family: inherit;
   }
@@ -193,7 +198,13 @@
     color: var(--theme-muted);
   }
 
-  tr:last-child td {
+  tbody th {
+    @apply text-base font-bold;
+    color: var(--theme-text);
+  }
+
+  tr:last-child td,
+  tr:last-child th {
     @apply border-b-0;
   }
 
@@ -217,6 +228,16 @@
 }
 
 @layer components {
+  .skip-link {
+    @apply fixed left-4 top-4 z-[100] -translate-y-24 rounded-lg px-4 py-2 font-bold transition-transform;
+    background: var(--theme-accent);
+    color: var(--theme-accent-ink);
+  }
+
+  .skip-link:focus {
+    @apply translate-y-0;
+  }
+
   .topbar {
     @apply sticky top-0 z-40 grid min-h-16 grid-cols-[auto_1fr_auto] items-center gap-5 border-b px-7;
     background: color-mix(in srgb, var(--theme-panel) 94%, transparent);
@@ -382,12 +403,22 @@
     color: var(--theme-danger);
   }
 
+  .error-summary:focus-visible {
+    outline: 3px solid var(--theme-focus);
+    outline-offset: 2px;
+  }
+
+  .field-error {
+    @apply mt-1.5 mb-0 text-sm font-semibold;
+    color: var(--theme-danger);
+  }
+
   .flash-region {
-    @apply pointer-events-none fixed left-1/2 top-4 z-[70] grid w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 gap-2;
+    @apply mb-5 grid gap-2;
   }
 
   .flash {
-    @apply pointer-events-auto relative overflow-hidden rounded-lg border text-sm;
+    @apply relative overflow-hidden rounded-lg border text-sm;
     background: var(--theme-panel);
     box-shadow: var(--theme-shadow);
   }
