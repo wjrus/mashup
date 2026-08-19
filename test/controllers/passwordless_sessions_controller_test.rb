@@ -5,6 +5,8 @@ class PasswordlessSessionsControllerTest < ActionDispatch::IntegrationTest
     get login_path
 
     assert_response :success
+    assert_select "link[rel='icon'][href='/icon.svg'][type='image/svg+xml'][sizes='any']"
+    assert_select "link[rel='icon'][href='/icon.png'][type='image/png'][sizes='512x512']"
     assert_select ".sign-in-theme select[data-theme-select] option", 6
   end
 
