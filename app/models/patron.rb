@@ -21,8 +21,16 @@ class Patron < ApplicationRecord
 
   normalizes :email, with: ->(email) { email.to_s.strip.downcase }
 
+  def self.patron_type_label(type)
+    type.to_s == "mashup" ? "MATCH" : type.to_s.humanize
+  end
+
+  def self.patron_type_options
+    patron_types.keys.map { |type| [ patron_type_label(type), type ] }
+  end
+
   def display_type
-    patron_type.humanize
+    self.class.patron_type_label(patron_type)
   end
 
   private

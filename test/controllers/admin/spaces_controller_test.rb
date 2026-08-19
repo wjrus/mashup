@@ -7,6 +7,8 @@ class Admin::SpacesControllerTest < ActionDispatch::IntegrationTest
     get admin_spaces_path
 
     assert_response :success
+    assert_select "a.brand", text: "MATCH Bookings"
+    assert_no_match(/Mashup/i, response.body)
     assert_select "body[data-controller~='confirmation']"
     assert_select "a.skip-link[href='#main-content']", text: "Skip to main content"
     assert_select "main#main-content[tabindex='-1']"

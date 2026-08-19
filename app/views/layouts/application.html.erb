@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title><%= content_for(:title) || "Mashup" %></title>
+    <title><%= content_for(:title) || "MATCH" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Mashup">
+    <meta name="application-name" content="MATCH">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -31,7 +31,7 @@
 
     <% if current_user %>
       <header class="topbar">
-        <%= link_to "Mashup Bookings", root_path, class: "brand" %>
+        <%= link_to "MATCH Bookings", root_path, class: "brand" %>
         <nav aria-label="Primary navigation">
           <%= link_to "Dashboard", root_path, aria: { current: controller_name == "dashboard" ? "page" : nil } %>
           <%= link_to "Bookings", bookings_path, aria: { current: controller_name.in?(%w[bookings booking_documents]) ? "page" : nil } %>

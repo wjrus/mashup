@@ -1,16 +1,16 @@
-# Mashup Bookings Agent Guide
+# MATCH Bookings Agent Guide
 
 This file is the durable handoff context for Codex agents working in this repository. Read it before making changes, then inspect `README.md`, `git status`, recent commits, and the relevant code. Prefer repository state and tests over assumptions from an earlier chat.
 
 ## Product
 
-Mashup Bookings is an internal booking-operations system for a nonprofit theatre company. It is a Rails 8.1 application backed by PostgreSQL.
+MATCH Bookings is an internal booking-operations system for a nonprofit theatre company. It is a Rails 8.1 application backed by PostgreSQL. The repository and internal Rails namespace remain `mashup`/`Mashup`, but every user-visible product name and label must use `MATCH`.
 
 The near-term goal is a board-ready internal tool. The architecture should remain suitable for later customer self-service, but do not build public customer workflows before their requirements are known.
 
 Core concepts:
 
-- A `Patron` is an organization and has one of four business classifications: nonprofit, for-profit, partner, or Mashup.
+- A `Patron` is an organization and has one of four business classifications: nonprofit, for-profit, partner, or MATCH (stored internally as `mashup`).
 - A patron can have multiple contacts and bookings.
 - A `Booking` is the overall engagement and may span multiple weeks.
 - A `BookingRun` is a specific scheduled use of a space within the booking dates.

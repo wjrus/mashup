@@ -16,7 +16,7 @@
     </div>
     <div>
       <%= form.label :patron_type %>
-      <%= form.select :patron_type, Patron.patron_types.keys.map { |key| [key.humanize, key] } %>
+      <%= form.select :patron_type, Patron.patron_type_options %>
     </div>
     <div>
       <%= form.label :status %>

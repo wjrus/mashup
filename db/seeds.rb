@@ -15,7 +15,7 @@ spaces.each do |name, capacity, description|
   end
 end
 
-mashup = Patron.find_or_create_by!(name: "Mashup") do |patron|
+mashup = Patron.find_or_create_by!(name: "MATCH") do |patron|
   patron.patron_type = :mashup
   patron.status = :active
   patron.email = "bookings@example.org"

@@ -1,4 +1,4 @@
-# Mashup Bookings
+# MATCH Bookings
 
 Internal booking operations for a nonprofit theatre company, built with Rails 8.1 and PostgreSQL.
 
@@ -7,7 +7,7 @@ Internal booking operations for a nonprofit theatre company, built with Rails 8.
 - Google and one-time email-link login for authorized staff.
 - A single configured administrator (`wjr@wjr.us` by default).
 - Staff access for `wjr.us` and `mashuprockandrollmusical.com` accounts.
-- Patrons and contacts classified as nonprofit, for-profit, partner, or Mashup.
+- Patrons and contacts classified as nonprofit, for-profit, partner, or MATCH.
 - Multi-week bookings with multiple scheduled runs across managed spaces.
 - Database-backed protection against overlapping use of a space.
 - Contract and document tracking with protected local downloads or Google Drive links.
