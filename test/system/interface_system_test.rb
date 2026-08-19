@@ -85,6 +85,10 @@ class InterfaceSystemTest < ApplicationSystemTestCase
       page.driver.browser.switch_to.alert.text
     end
 
+    cancel_button = find_button("Cancel")
+    assert_operator cancel_button.native.property("clientWidth"), :>=,
+      cancel_button.native.property("scrollWidth")
+
     click_button "Cancel"
     assert_no_selector "dialog[open]"
     assert Space.exists?(space.id)
