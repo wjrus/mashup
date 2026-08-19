@@ -56,10 +56,18 @@ class InterfaceSystemTest < ApplicationSystemTestCase
     space = Space.create!(name: "Temporary room")
     visit admin_spaces_path
 
-    page.current_window.resize_to(390, 844)
+    page.driver.browser.execute_cdp(
+      "Emulation.setDeviceMetricsOverride",
+      width: 390,
+      height: 844,
+      deviceScaleFactor: 1,
+      mobile: false
+    )
     assert_operator page.evaluate_script("document.documentElement.scrollWidth"), :<=,
       page.evaluate_script("window.innerWidth")
-    page.current_window.resize_to(1280, 900)
+    assert_operator page.evaluate_script("document.querySelector('.table-wrap').scrollWidth"), :>,
+      page.evaluate_script("document.querySelector('.table-wrap').clientWidth")
+    page.driver.browser.execute_cdp("Emulation.clearDeviceMetricsOverride")
 
     within("tr", text: space.name) do
       edit_button = find("a", text: "Edit")
