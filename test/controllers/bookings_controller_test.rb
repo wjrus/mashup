@@ -1,6 +1,17 @@
 require "test_helper"
 
 class BookingsControllerTest < ActionDispatch::IntegrationTest
+  test "booking form confirms cancellation and run removal with the custom dialog" do
+    sign_in_as(users(:two))
+
+    get edit_booking_path(bookings(:one))
+
+    assert_response :success
+    assert_select "form[data-confirm-when-field='booking[status]'][data-confirm-when-value='canceled']"
+    assert_select "button[data-action='nested-form#remove'][data-confirm-message]", minimum: 1
+    assert_select "[data-turbo-confirm]", count: 0
+  end
+
   test "creates a booking while ignoring an untouched run row" do
     sign_in_as(users(:two))
 

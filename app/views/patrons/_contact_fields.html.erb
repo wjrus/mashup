@@ -29,5 +29,10 @@
     <%= contact_fields.check_box :billing_contact %>
     Billing
   </label>
-  <button type="button" class="secondary-button" data-action="nested-form#remove">Remove contact</button>
+  <button type="button"
+          class="secondary-button"
+          data-action="nested-form#remove"
+          data-confirm-title="Remove contact?"
+          data-confirm-message="Remove this contact from the patron? The removal is applied when you save."
+          data-confirm-label="Remove contact">Remove contact</button>
 </div>

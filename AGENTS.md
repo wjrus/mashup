@@ -76,6 +76,8 @@ Production runs from `/apps/mashup` with `compose.production.yml`, behind host
 nginx and Let's Encrypt TLS for `bookthematch.com`. Use `scripts/deploy` for
 updates and `scripts/logs` for service logs. Do not commit `.env.production` or
 `.env.postgres`; back up both the Postgres and Active Storage Docker volumes.
+The user owns production deployments; agents should commit and push completed
+work, but must not deploy unless the user explicitly requests it again.
 
 ## Verification
 
@@ -86,7 +88,9 @@ bin/rails test
 bin/ci
 ```
 
-`bin/ci` includes setup, RuboCop, dependency audits, Brakeman, Rails tests, and seed verification. Keep it green. Add request, model, service, or browser coverage in proportion to the behavior changed.
+`bin/ci` includes setup, RuboCop, dependency audits, Brakeman, Rails tests,
+system tests, and seed verification. Keep it green. Add request, model, service,
+or browser coverage in proportion to the behavior changed.
 
 For UI changes, verify normal desktop and narrow mobile widths. Forms and navigation must not create horizontal overflow. Preserve the restrained operations-oriented interface rather than turning the app into a marketing site.
 

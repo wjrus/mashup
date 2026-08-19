@@ -23,7 +23,15 @@
   </div>
 
   <% if ENV["GOOGLE_CLIENT_ID"].present? && ENV["GOOGLE_CLIENT_SECRET"].present? %>
-    <%= button_to current_user.google_calendar_connected? ? "Reconnect calendar" : "Connect calendar", "/auth/google_calendar", method: :post, data: { turbo: false }, class: "primary-button" %>
+    <% calendar_button_data = { turbo: false } %>
+    <% if current_user.google_calendar_connected? %>
+      <% calendar_button_data.merge!(
+        confirm_title: "Reconnect Google Calendar?",
+        confirm_message: "This replaces the stored Calendar authorization for the organization account.",
+        confirm_label: "Reconnect calendar"
+      ) %>
+    <% end %>
+    <%= button_to current_user.google_calendar_connected? ? "Reconnect calendar" : "Connect calendar", "/auth/google_calendar", method: :post, data: calendar_button_data, class: "primary-button" %>
   <% else %>
     <div class="empty-state">Google OAuth credentials are not configured.</div>
   <% end %>

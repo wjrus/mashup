@@ -7,7 +7,14 @@
 
 <%= render "shared/errors", record: booking %>
 
-<%= form_with model: booking, class: "form", data: { controller: "patron-contact" } do |form| %>
+<%= form_with model: booking, class: "form", data: {
+  controller: "patron-contact",
+  confirm_title: "Cancel booking?",
+  confirm_message: "Canceling this booking also cancels its scheduled runs and releases the spaces. Continue?",
+  confirm_label: "Cancel booking",
+  confirm_when_field: "booking[status]",
+  confirm_when_value: "canceled"
+} do |form| %>
   <section class="form-grid">
     <div>
       <%= form.label :title %>

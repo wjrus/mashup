@@ -17,5 +17,10 @@
     <%= run_fields.label :status %>
     <%= run_fields.select :status, BookingRun.statuses.keys.map { |key| [key.humanize, key] } %>
   </div>
-  <button type="button" class="secondary-button" data-action="nested-form#remove">Remove run</button>
+  <button type="button"
+          class="secondary-button"
+          data-action="nested-form#remove"
+          data-confirm-title="Remove run?"
+          data-confirm-message="Remove this scheduled run from the booking? The removal is applied when you save."
+          data-confirm-label="Remove run">Remove run</button>
 </div>

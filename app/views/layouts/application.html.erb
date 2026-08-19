@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title><%= content_for(:title) || "Mashup" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -23,7 +23,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
+  <body data-controller="confirmation">
     <% if current_user %>
       <header class="topbar">
         <%= link_to "Mashup Bookings", root_path, class: "brand" %>
@@ -33,25 +33,54 @@
           <%= link_to "Patrons", patrons_path %>
           <%= link_to "Settings", settings_path if current_user.admin? %>
         </nav>
-        <div class="account">
-          <% if current_user.avatar_url.present? %>
-            <%= image_tag current_user.avatar_url, alt: current_user.name, class: "avatar" %>
-          <% end %>
-          <span><%= current_user.name.presence || current_user.email %></span>
-          <%= button_to "Sign out", logout_path, method: :delete, class: "link-button" %>
-        </div>
+        <details class="account-menu" data-controller="menu">
+          <summary aria-label="Account menu" aria-haspopup="menu">
+            <% if current_user.avatar_url.present? %>
+              <%= image_tag current_user.avatar_url, alt: "", class: "avatar" %>
+            <% else %>
+              <span class="avatar-fallback" aria-hidden="true"><%= (current_user.name.presence || current_user.email).first.upcase %></span>
+            <% end %>
+            <span><%= current_user.name.presence || current_user.email %></span>
+          </summary>
+          <div class="account-menu-panel">
+            <div class="account-menu-heading">
+              <strong><%= current_user.name.presence || "Signed in" %></strong>
+              <span><%= current_user.email %></span>
+            </div>
+            <div class="account-menu-divider"></div>
+            <%= render "shared/theme_picker" %>
+            <div class="account-menu-divider"></div>
+            <%= button_to "Sign out", logout_path, method: :delete, class: "link-button" %>
+          </div>
+        </details>
       </header>
     <% end %>
 
-    <main class="page">
-      <% if notice.present? %>
-        <div class="flash notice"><%= notice %></div>
-      <% end %>
-      <% if alert.present? %>
-        <div class="flash alert"><%= alert %></div>
-      <% end %>
+    <% if notice.present? || alert.present? %>
+      <div class="flash-region" aria-live="polite">
+        <%= render "shared/flash", kind: :notice, message: notice if notice.present? %>
+        <%= render "shared/flash", kind: :alert, message: alert if alert.present? %>
+      </div>
+    <% end %>
 
+    <main class="page">
       <%= yield %>
     </main>
+
+    <dialog class="confirmation-dialog"
+            aria-labelledby="confirmation-title"
+            aria-describedby="confirmation-message"
+            data-confirmation-target="dialog"
+            data-action="click->confirmation#closeFromBackdrop cancel->confirmation#cancel">
+      <div class="confirmation-dialog-header">
+        <h2 id="confirmation-title" data-confirmation-target="title">Please confirm</h2>
+        <button type="button" class="modal-close" aria-label="Close confirmation" data-action="confirmation#cancel">×</button>
+      </div>
+      <p id="confirmation-message" class="confirmation-dialog-body" data-confirmation-target="message"></p>
+      <div class="confirmation-dialog-actions">
+        <button type="button" class="secondary-button modal-close" data-action="confirmation#cancel">Cancel</button>
+        <button type="button" class="danger-button" data-confirmation-target="confirmButton" data-action="confirmation#confirm">Confirm</button>
+      </div>
+    </dialog>
   </body>
 </html>

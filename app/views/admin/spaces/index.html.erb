@@ -29,7 +29,11 @@
               <%= link_to "Edit", edit_admin_space_path(space) %>
               <%= button_to "Delete", admin_space_path(space), method: :delete,
                 class: "link-button danger-link",
-                data: { turbo_confirm: "Delete #{space.name}? This cannot be undone." } %>
+                data: {
+                  confirm_title: "Delete space?",
+                  confirm_message: "Delete #{space.name}? This cannot be undone.",
+                  confirm_label: "Delete space"
+                } %>
             </div>
           </td>
         </tr>

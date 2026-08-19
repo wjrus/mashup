@@ -1,0 +1,12 @@
+<div class="flash <%= kind %>"
+     role="<%= kind == :alert ? "alert" : "status" %>"
+     data-controller="dismissible"
+     data-dismissible-duration-value="10000">
+  <div class="flash-content">
+    <p class="flash-message"><%= message %></p>
+    <button type="button" class="flash-dismiss" aria-label="Dismiss message" data-action="dismissible#dismiss">×</button>
+  </div>
+  <div class="flash-progress-track" aria-hidden="true">
+    <div class="flash-progress" data-dismissible-target="progress"></div>
+  </div>
+</div>

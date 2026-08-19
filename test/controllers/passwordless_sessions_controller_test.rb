@@ -1,6 +1,13 @@
 require "test_helper"
 
 class PasswordlessSessionsControllerTest < ActionDispatch::IntegrationTest
+  test "sign-in screen offers the browser theme picker" do
+    get login_path
+
+    assert_response :success
+    assert_select ".sign-in-theme select[data-theme-select] option", 6
+  end
+
   test "emails an authorized staff member without revealing account status" do
     assert_emails 1 do
       post email_login_path, params: { email: users(:two).email }
