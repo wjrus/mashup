@@ -42,6 +42,9 @@ docker compose up --build
 
 The web app is available at http://localhost:3000. PostgreSQL is bound to `127.0.0.1:5432` by default.
 
+Production uses the separate `compose.production.yml` stack behind nginx. See
+[`docs/deploy.md`](docs/deploy.md) for deployment, logging, TLS, and backup notes.
+
 ## Google setup
 
 Create a Google Cloud OAuth web application and enable the Google Calendar API. For local development, add these authorized redirect URIs:

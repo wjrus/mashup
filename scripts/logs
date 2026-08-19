@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+  cat <<'USAGE'
+Usage: ./scripts/logs [web|db|all]
+
+Follows the last 200 lines of application logs by default.
+USAGE
+  exit 0
+fi
+
+services=("${@:-web}")
+if [[ "${1:-}" == "all" ]]; then
+  services=(web db)
+fi
+
+docker compose -f compose.production.yml logs -f --tail=200 "${services[@]}"

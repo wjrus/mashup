@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:18
+    restart: unless-stopped
+    env_file:
+      - .env.postgres
+    environment:
+      POSTGRES_DB: mashup_production
+      POSTGRES_USER: mashup
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mashup -d mashup_production"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql
+      - ./docker/postgres/init-multiple-dbs.sh:/docker-entrypoint-initdb.d/10-init-multiple-dbs.sh:ro
+
+  web:
+    build: .
+    image: mashup:production
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    environment:
+      RAILS_ENV: production
+      POSTGRES_HOST: db
+      POSTGRES_PORT: "5432"
+      SOLID_QUEUE_IN_PUMA: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS -H \"Host: $${APP_HOST:-bookthematch.com}\" http://127.0.0.1/up >/dev/null"]
+      interval: 30s
+      timeout: 3s
+      start_period: 20s
+      retries: 12
+    ports:
+      - "127.0.0.1:${MASHUP_PRODUCTION_PORT:-3020}:80"
+    volumes:
+      - app_storage:/rails/storage
+
+volumes:
+  postgres_data:
+  app_storage:

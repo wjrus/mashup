@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+compose() {
+  docker compose -f compose.production.yml "$@"
+}
+
+log() {
+  printf "\n==> %s\n" "$*"
+}
+
+fail() {
+  printf "\nDeploy failed: %s\n" "$*" >&2
+  exit 1
+}
+
+require_file() {
+  [[ -f "$1" ]] || fail "missing $1; copy the matching .example file and fill it in"
+}
+
+container_state() {
+  local container_id
+  container_id="$(compose ps -q "$1")"
+  [[ -n "$container_id" ]] || { printf "missing"; return; }
+  docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' "$container_id"
+}
+
+wait_for_state() {
+  local service="$1"
+  local expected="$2"
+  local timeout_seconds="$3"
+  local elapsed=0
+  local state
+
+  while (( elapsed < timeout_seconds )); do
+    state="$(container_state "$service")"
+    if [[ "$state" == "$expected" ]]; then
+      printf "%s is %s\n" "$service" "$state"
+      return 0
+    fi
+    if [[ "$state" == "exited" || "$state" == "dead" || "$state" == "unhealthy" ]]; then
+      compose logs --tail=120 "$service" >&2 || true
+      fail "$service is $state"
+    fi
+    sleep 3
+    elapsed=$((elapsed + 3))
+  done
+
+  compose logs --tail=120 "$service" >&2 || true
+  fail "$service did not become $expected within ${timeout_seconds}s"
+}
+
+wait_for_http() {
+  local timeout_seconds="$1"
+  local elapsed=0
+  local port="${MASHUP_PRODUCTION_PORT:-3020}"
+
+  while (( elapsed < timeout_seconds )); do
+    if curl -fsS -H "Host: bookthematch.com" "http://127.0.0.1:${port}/up" >/dev/null; then
+      printf "local health check passed on port %s\n" "$port"
+      return 0
+    fi
+    sleep 1
+    elapsed=$((elapsed + 1))
+  done
+
+  compose logs --tail=120 web >&2 || true
+  fail "web did not answer /up within ${timeout_seconds}s"
+}
+
+require_file .env.production
+require_file .env.postgres
+
+if [[ -d .git ]]; then
+  git diff --quiet || fail "tracked files have unstaged changes"
+  git diff --cached --quiet || fail "tracked files have staged changes"
+  log "Pulling latest code"
+  git pull --ff-only
+fi
+
+log "Validating Compose configuration"
+compose config >/dev/null
+
+log "Building application image"
+compose build --pull web
+
+log "Starting PostgreSQL"
+compose up -d db
+wait_for_state db healthy 120
+
+log "Preparing databases"
+compose run --rm --no-deps web ./bin/rails db:prepare
+
+log "Starting application"
+compose up -d --no-deps web
+wait_for_state web healthy 180
+wait_for_http 30
+
+log "Deployment complete"
+compose ps

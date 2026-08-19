@@ -38,10 +38,10 @@ Rails.application.configure do
   }
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
-  # config.assume_ssl = true
+  config.assume_ssl = ENV.fetch("MASHUP_ASSUME_SSL", "true") == "true"
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
+  config.force_ssl = ENV.fetch("MASHUP_FORCE_SSL", "true") == "true"
 
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
@@ -77,10 +77,9 @@ Rails.application.configure do
   config.active_record.attributes_for_inspect = [ :id ]
 
   # Enable DNS rebinding protection and other `Host` header attacks.
-  # config.hosts = [
-  #   "example.com",     # Allow requests from example.com
-  #   /.*\.example\.com/ # Allow requests from subdomains like `www.example.com`
-  # ]
+  ENV.fetch("MASHUP_HOSTS", ENV.fetch("APP_HOST", "bookthematch.com")).split(",").each do |host|
+    config.hosts << host.strip if host.strip.present?
+  end
   #
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }

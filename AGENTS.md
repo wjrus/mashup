@@ -72,6 +72,11 @@ Development email-login messages are written to `tmp/mails`. Never commit `.env`
 
 Docker Compose is supported through `compose.yml`, but native `bin/dev` is the user's normal interactive workflow.
 
+Production runs from `/apps/mashup` with `compose.production.yml`, behind host
+nginx and Let's Encrypt TLS for `bookthematch.com`. Use `scripts/deploy` for
+updates and `scripts/logs` for service logs. Do not commit `.env.production` or
+`.env.postgres`; back up both the Postgres and Active Storage Docker volumes.
+
 ## Verification
 
 Run focused tests while developing and the full CI script before finishing a substantial change:
