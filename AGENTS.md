@@ -94,6 +94,28 @@ or browser coverage in proportion to the behavior changed.
 
 For UI changes, verify normal desktop and narrow mobile widths. Forms and navigation must not create horizontal overflow. Preserve the restrained operations-oriented interface rather than turning the app into a marketing site.
 
+## Accessibility
+
+WCAG 2.1 Level AA is a release requirement. Treat accessibility regressions as
+functional defects, not optional polish. The current baseline audit and known
+remediation work are recorded in `docs/accessibility-audit.md`.
+
+- Prefer native semantic HTML and expose every control's name, role, state, and
+  value. Preserve logical headings, landmarks, form labels, table relationships,
+  and status messages.
+- Every workflow must be fully operable by keyboard with a visible focus
+  indicator and deliberate focus restoration after dialogs or dynamic removal.
+- Never rely on color alone. Verify 4.5:1 contrast for normal text, 3:1 for
+  large text and required component boundaries, and test every supported theme.
+- Associate validation errors and instructions with their fields. Announce
+  asynchronous results without unexpectedly moving focus.
+- Do not introduce an unadjustable time limit unless the same information or
+  action remains available elsewhere. Auto-dismissed messages require special
+  scrutiny.
+- For substantial UI changes, test keyboard-only use, 200% zoom, 320 CSS-pixel
+  reflow, desktop and mobile layouts, and at least one screen reader. Automated
+  checks and system tests are useful evidence but do not establish conformance.
+
 ## Engineering Constraints
 
 - Preserve the distinction between booking date ranges and individual run times.
