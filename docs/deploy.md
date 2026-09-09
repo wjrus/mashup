@@ -38,3 +38,12 @@ docker compose -f compose.production.yml exec web ./bin/rails console
 ```
 
 Back up the `mashup_postgres_data` and `mashup_app_storage` Docker volumes.
+
+## Solid Queue 1.7
+
+The existing queue schema remains supported for ordinary jobs. The application
+does not use job batches, so the optional batch-schema migration is deferred.
+Solid Queue may log a deprecation warning about the missing batch tables.
+Before adopting batches or upgrading to Solid Queue 2.0, follow the
+[upstream upgrade instructions](https://github.com/rails/solid_queue/blob/v1.7.0/README.md#upgrading-existing-installations)
+and review the generated migration for the separate queue database.
